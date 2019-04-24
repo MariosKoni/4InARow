@@ -9,15 +9,12 @@ getData::getData() {
 
   std::cout << "Loading map..." << std::endl;
 
-  while (std::getline(f, tmp)) {
-    stage += tmp;
-    std::cout << stage << std::endl;
-    std::cout << "----------" << std::endl;
+  int i = 0;
+  while (f.get(stage[i])) {
+    i++;
   }
 
   std::cout << "Map loaded!" << std::endl;
-}
 
-void getData::show() {
-  cout << stage << std::endl;
+  f.close();
 }

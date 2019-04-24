@@ -3,9 +3,8 @@
 class getData {
 private:
   const std::string path = "/home/toomlg4u/4InARow/Data/initData.txt";
-  std::string stage;
+  char stage[41];
 
 public:
   getData();
-  void show();
 };
