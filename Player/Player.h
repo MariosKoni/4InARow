@@ -12,4 +12,9 @@ private:
 
 public:
   Player();
+
+  std::string getName();
+  std::map<std::string, char> getMap();
+  int getScore();
+  void setScore(int s);
 };

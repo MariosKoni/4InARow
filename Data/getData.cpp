@@ -9,12 +9,28 @@ getData::getData() {
 
   std::cout << "Loading map..." << std::endl;
 
-  int i = 0;
-  while (f.get(stage[i])) {
-    i++;
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++)
+      f.get(stage[i][j]);
   }
 
   std::cout << "Map loaded!" << std::endl;
 
   f.close();
+}
+
+char[] getData::getStage() {
+  return stage;
+}
+
+void getData::setToStage(int i, int j, char v) {
+  stage[i][j] = v;
+}
+
+int getData::getRows() {
+  return rows;
+}
+
+int getData::getCols() {
+  return cols;
 }
