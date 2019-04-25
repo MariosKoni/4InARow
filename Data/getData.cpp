@@ -23,6 +23,13 @@ char[] getData::getStage() {
   return stage;
 }
 
+bool getData::checkStage(int i, int j, char c) {
+  if (stage[i][j] == c)
+    return true;
+  else
+    return false;
+}
+
 void getData::setToStage(int i, int j, char v) {
   stage[i][j] = v;
 }

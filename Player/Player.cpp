@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 
 Player::Player() {
   std::cout << "Hello player what's your name ?" << std::endl;

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <list>
 #include <iterator>
+#include <map>
 
 Game::Game(Player *p, Data *m) {
   pls = &p;
@@ -20,8 +21,8 @@ Game::Game(Player *p, Data *m) {
 
 bool Game::updateGame(int pl1, int pl2) {
   currentRound++;
-  *pls->score = pl1;
-  *(pls + 1)->score = pl2;
+  *pls->setScore(pl1);
+  *(pls + 1)->setScore(pl2);
 
   if (currentRound > maxRounds)
     return false;
@@ -30,19 +31,23 @@ bool Game::updateGame(int pl1, int pl2) {
 }
 
 void Game::checkAvailable() {
-
-  for (int i = 0; i < 41; i++) {
-    if (*map->stage[i] == ' ') {
-      ms.spaces.push_back(i);
-      ms.numOfSpaces++;
+  for (int i = 0; i < *map->getRows(); ++i) {
+    for (int j = 0; j < *map->getCols(); ++j) {
+      if (*map->checkStage(i, j, ' ')) {
+        ms.spaces.push_back(i);
+        ms.numOfSpaces++;
+      }
     }
   }
 }
 
 void Game::findNearestnPlace(int b, char ch) {
-  for (int i = b; i < 41; i++) {
-    if (*map->stage[i] != ' ')
-      *map->stage[i - 1] = ch;
+  for (int i = 0; i < *map->getRows(); ++i) {
+    for (int j = 0; j < *map->getCols(); ++j) {
+      if (!*map->checkStage(i, j, ' ')) {
+        *map->setStage(i, j - 1, ch);
+      }
+    }
   }
 }
 
@@ -69,9 +74,9 @@ bool Game::play(unsigned int i) {
   int pls2 = 0;
 
   if (i % 2 == 0)
-    std::cout << "It's " << *pls->name << " to play" << std::endl;
+    std::cout << "It's " << *pls->getName() << " to play" << std::endl;
   else
-    std::cout << "It's " << *(pls + 1)->name << " to play" << std::endl;
+    std::cout << "It's " << *(pls + 1)->getName() << " to play" << std::endl;
 
   checkAvailable();
 
@@ -86,8 +91,8 @@ bool Game::play(unsigned int i) {
 
   findNearestnPlace(b);
   if (checkIfPlayerWon() && !updateGame()) {
-    std::cout << "The game is over!\n" << *(pls + i)->name << " has won!" << std::endl;
-    std::cout << "Score: " << *pls->score << " : " << *(pls + 1)->score << std::endl;
+    std::cout << "The game is over!\n" << *(pls + i)->getName() << " has won!" << std::endl;
+    std::cout << "Score: " << *pls->getScore() << " : " << *(pls + 1)->getScore() << std::endl;
     return false;
   }
   system("clear");

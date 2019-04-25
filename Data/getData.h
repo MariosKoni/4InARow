@@ -14,4 +14,5 @@ public:
   void setToStage(int i, int j, char v);
   int getRows();
   int getCols();
+  bool checkStage(int i, int j, char c);
 };
