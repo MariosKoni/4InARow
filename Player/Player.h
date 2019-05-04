@@ -2,12 +2,13 @@
 
 #include <string>
 #include <map>
+#include <utility>
 
 class Player {
 private:
   std::string name;
   std::string favColor;
-  std::map<std::string, char> col;
+  std::pair<std::string, char> col;
 
   int score;
 
@@ -15,7 +16,7 @@ public:
   Player();
 
   std::string getName();
-  std::map<std::string, char> getMap();
+  std::pair<std::string, char> getColor();
   int getScore();
   void setScore(int s);
 };

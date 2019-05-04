@@ -5,6 +5,8 @@
 
 #include <string>
 #include <list>
+#include <utility>
+#include <vector>
 
 class Game {
 private:
@@ -16,10 +18,7 @@ private:
   Player *pls;
   Data *map;
 
-  struct mapStats {
-    unsigned int numOfSpaces;
-    list <unsigned int> spaces;
-  } ms;
+  std::vector<std::pair<int, int>> spaces;
 
 public:
   Game(Player *p, Data *m);
@@ -27,6 +26,5 @@ public:
   bool play(unsigned int i); //main game method
   bool updateGame(int pl1, int pl2); //method to update the score and current round as well as check if the game has ended
   void checkAvailable(); //method that checks the available spots for the balls to be
-  void findNearestnPlace(int b, char ch); //method that finds the nearst spot in column for the ball to be placed, and places it
   bool checkIfPlayerWon(char ch); //Check if a player has won
 };

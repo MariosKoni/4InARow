@@ -3,9 +3,9 @@
 #include "../Data/Data.h"
 
 #include <iostream>
-#include <list>
-#include <iterator>
 #include <map>
+#include <utility>
+#include <vector>
 
 Game::Game(Player *p, Data *m) {
   pls = &p;
@@ -23,6 +23,7 @@ bool Game::updateGame(int pl1, int pl2) {
   currentRound++;
   *pls->setScore(pl1);
   *(pls + 1)->setScore(pl2);
+  spaces.clear();
 
   if (currentRound > maxRounds)
     return false;
@@ -33,19 +34,9 @@ bool Game::updateGame(int pl1, int pl2) {
 void Game::checkAvailable() {
   for (int i = 0; i < *map->getRows(); ++i) {
     for (int j = 0; j < *map->getCols(); ++j) {
-      if (*map->checkStage(i, j, ' ')) {
-        ms.spaces.push_back(i);
-        ms.numOfSpaces++;
-      }
-    }
-  }
-}
-
-void Game::findNearestnPlace(int b, char ch) {
-  for (int i = 0; i < *map->getRows(); ++i) {
-    for (int j = 0; j < *map->getCols(); ++j) {
       if (!*map->checkStage(i, j, ' ')) {
-        *map->setStage(i, j - 1, ch);
+        spot = make_pair(i, j - 1);
+        spaces.push_back(spot);
       }
     }
   }
@@ -54,14 +45,45 @@ void Game::findNearestnPlace(int b, char ch) {
 bool Game::checkIfPlayerWon(char ch) {
   int counter = 0;
 
-  for (int i = 0; i < 41; i++) {
-    if (*map->stage[i] == ch) {
-      for (int j = 1; j <= 4; j++) {
-        int z = 0;
-        while (*map->stage[z] == ch) {
-          if (++z == 4)
-            return true;
+  for (int i = 0; i < *map->getRows(); ++i) {
+    for (int j = 0; j < *map->getCols(); ++j) {
+      if (*map->stage[i][j] == ch) {
+        int x = 0;
+        int y = 0;
+
+        while (*map->stage[x - 1][y] == ch) {
+          i--;
+          counter++;
         }
+        if (counter == 4)
+          return true;
+
+          int x = 0;
+          int y = 0;
+          while (*map->stage[x + 1][y] == ch) {
+            i++;
+            counter++;
+          }
+          if (counter == 4)
+            return true;
+
+          int x = 0;
+          int y = 0;
+          while (*map->stage[x][y + 1] == ch) {
+            y++;
+            counter++;
+          }
+          if (counter == 4)
+            return true;
+
+          int x = 0;
+          int y = 0;
+          while (*map->stage[x][y - 1] == ch) {
+            y--;
+            counter++;
+          }
+          if (counter == 4)
+            return true;
       }
     }
   }
@@ -80,19 +102,19 @@ bool Game::play(unsigned int i) {
 
   checkAvailable();
 
-  list <unsigned int>::iterator it;
-  int b;
+  int x, y;
   std::cout << "Available spots are:" << std::endl;
-  for(it = ms.spaces.begin(); it != ms.spaces.end(); ++it)
-    std::cout << *it << ", ";
+  for(auto const& value : spaces)
+    std::cout << "[" << value.first << "]" << " [" << value.second << "]" << " ";
   std::endl;
-  std::cout << "Type the number (that corresponds to a place in the map) to place the ball: ";
-  std::cin >> b;
+  std::cout << "Type the numbers (that corresponds to a place in the map) to place the ball: ";
+  std::cin >> x >> y;
 
-  findNearestnPlace(b);
-  if (checkIfPlayerWon() && !updateGame()) {
+  *map->setStage(i, j - 1, *(pls + i).getColor());
+  if (checkIfPlayerWon(*(pls + i).getColor()) || !updateGame()) {
     std::cout << "The game is over!\n" << *(pls + i)->getName() << " has won!" << std::endl;
     std::cout << "Score: " << *pls->getScore() << " : " << *(pls + 1)->getScore() << std::endl;
+
     return false;
   }
   system("clear");
