@@ -2,6 +2,7 @@
 
 #include "../Data/getData.h"
 #include "../Player/Player.h"
+#include "../Game/Game.h"
 
 int main(int argc, char const *argv[]) {
   getData gd;
