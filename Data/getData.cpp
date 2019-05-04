@@ -19,8 +19,8 @@ getData::getData() {
   f.close();
 }
 
-char* getData::getStage() {
-  return &stage;
+char** getData::getStage() {
+  return stage;
 }
 
 bool getData::checkStage(int i, int j, char c) {
