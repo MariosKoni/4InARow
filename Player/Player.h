@@ -16,7 +16,7 @@ public:
   Player();
 
   std::string getName();
-  std::pair<std::string, char> getColor();
+  char getColor();
   int getScore();
   void setScore(int s);
 };
