@@ -47,11 +47,11 @@ bool Game::checkIfPlayerWon(char ch) {
 
   for (int i = 0; i < *map->getRows(); ++i) {
     for (int j = 0; j < *map->getCols(); ++j) {
-      if (*map->stage[i][j] == ch) {
+      if (*map->checkStage(i, j, ch)) {
         int x = 0;
         int y = 0;
 
-        while (*map->stage[x - 1][y] == ch) {
+        while (*map->checkStage(x -1, y, ch)) {
           i--;
           counter++;
         }
@@ -60,7 +60,7 @@ bool Game::checkIfPlayerWon(char ch) {
 
           int x = 0;
           int y = 0;
-          while (*map->stage[x + 1][y] == ch) {
+          while (*map->checkStage(x + 1, y, ch)) {
             i++;
             counter++;
           }
@@ -69,7 +69,7 @@ bool Game::checkIfPlayerWon(char ch) {
 
           int x = 0;
           int y = 0;
-          while (*map->stage[x][y + 1] == ch) {
+          while (*map->checkStage(x, y + 1, ch)) {
             y++;
             counter++;
           }
@@ -78,7 +78,7 @@ bool Game::checkIfPlayerWon(char ch) {
 
           int x = 0;
           int y = 0;
-          while (*map->stage[x][y - 1] == ch) {
+          while (*map->checkStage(x, y - 1, ch)) {
             y--;
             counter++;
           }

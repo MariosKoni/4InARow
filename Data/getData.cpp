@@ -19,10 +19,6 @@ getData::getData() {
   f.close();
 }
 
-char** getData::getStage() {
-  return stage;
-}
-
 bool getData::checkStage(int i, int j, char c) {
   if (stage[i][j] == c)
     return true;
