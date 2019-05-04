@@ -1,9 +1,10 @@
 #pragma once
 
+#define rows 6
+#define cols 7
+
 class getData {
 private:
-  const int rows = 6;
-  const int cols = 7;
   const std::string path = "/home/toomlg4u/4InARow/Data/initData.txt";
   char stage[rows][cols];
 
