@@ -11,7 +11,7 @@ private:
 public:
   getData();
 
-  char[] getStage();
+  char* getStage();
   void setToStage(int i, int j, char v);
   int getRows();
   int getCols();
