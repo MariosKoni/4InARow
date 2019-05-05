@@ -13,8 +13,10 @@ Game::Game() {
   std::cout << "Welcome to " << gameTitle << "!" << std::endl;
   std::cout << "Select number of players\n1. One vs AI\n2. Two\nChoice: ";
   std::cin >> choice;
-  for (int i = 0; i < choice; ++i)
-    pls.push_back(new Player());
+  for (int i = 0; i < choice; ++i) {
+    std::unique_ptr<Player> pl(new Player());
+    pls.push_back(pl);
+  }
   std::cout << "Insert the number of rounds that will be played: ";
   std::cin >> maxRounds;
   map = std::unique_ptr<getData>(new getData());
@@ -34,7 +36,7 @@ void Game::checkAvailable() {
   for (int i = 0; i < map->getRows(); ++i) {
     for (int j = 0; j < map->getCols(); ++j) {
       if (!map->checkStage(i, j, ' ')) {
-        spot = make_pair(i, j - 1);
+        std::pair<int ,int>spot(i, j - 1);
         spaces.push_back(spot);
       }
     }
@@ -108,13 +110,13 @@ bool Game::play(unsigned int i) {
   std::cout << "Available spots are:" << std::endl;
   for(auto const& value : spaces)
     std::cout << "[" << value.first << "]" << " [" << value.second << "]" << " ";
-  std::endl;
+  std::cout << std::endl;
   std::cout << "Type the numbers (that corresponds to a place in the map) to place the ball: ";
   std::cin >> x >> y;
 
-  map->setStage(i, j - 1, pls[turn]->getColor());
+  map->setToStage(x, y - 1, pls[turn]->getColor());
 
-  if (checkIfPlayerWon(pls[turn]->getColor()) {
+  if (checkIfPlayerWon(pls[turn]->getColor())) {
     pls[turn]->addScore();
     if (!updateGame()) {
       std::cout << "The game is over!\n" << pls[turn]->getName() << " has won!" << std::endl;
