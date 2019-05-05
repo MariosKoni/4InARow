@@ -1,12 +1,13 @@
 #pragma once
 
 #include "../Player/Player.h"
-#include "../Data/Data.h"
+#include "../Data/getData.h"
 
 #include <string>
 #include <list>
 #include <utility>
 #include <vector>
+#include <memory>
 
 class Game {
 private:
@@ -15,16 +16,16 @@ private:
   int currentRound;
   int choice;
 
-  Player *pls;
-  Data *map;
+  std::std::vector<unique_ptr<Player>> pls;
+  std::unique_ptr<getData> map;
 
   std::vector<std::pair<int, int>> spaces;
 
 public:
-  Game(Player *p, Data *m);
+  Game();
 
   bool play(unsigned int i); //main game method
-  bool updateGame(int pl1, int pl2); //method to update the score and current round as well as check if the game has ended
+  bool updateGame(); //method to erase vector and current round as well as check if the game has ended
   void checkAvailable(); //method that checks the available spots for the balls to be
   bool checkIfPlayerWon(char ch); //Check if a player has won
 };

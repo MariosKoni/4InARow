@@ -29,6 +29,6 @@ int Player::getScore() {
   return score;
 }
 
-void Player::setScore(int s) {
-  score = s;
+void Player::addScore() {
+  score++;
 }

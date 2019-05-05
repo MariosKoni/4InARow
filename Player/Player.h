@@ -18,5 +18,5 @@ public:
   std::string getName();
   char getColor();
   int getScore();
-  void setScore(int s);
+  void addScore();
 };
