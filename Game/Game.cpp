@@ -14,8 +14,8 @@ Game::Game() {
   std::cout << "Select number of players\n1. One vs AI\n2. Two\nChoice: ";
   std::cin >> choice;
   for (int i = 0; i < choice; ++i) {
-    std::unique_ptr<Player> pl(new Player());
-    pls.push_back(pl);
+    std::shared_ptr<Player> pl(new Player());
+    pls.emplace_back(pl);
   }
   std::cout << "Insert the number of rounds that will be played: ";
   std::cin >> maxRounds;
@@ -33,11 +33,11 @@ bool Game::updateGame() {
 }
 
 void Game::checkAvailable() {
-  for (int i = 0; i < map->getRows(); ++i) {
-    for (int j = 0; j < map->getCols(); ++j) {
+  for (int i = 1; i < map->getRows() - 1; ++i) {
+    for (int j = 1; j < map->getCols() - 1; ++j) {
       if (!map->checkStage(i, j, ' ')) {
         std::pair<int ,int>spot(i, j - 1);
-        spaces.push_back(spot);
+        spaces.emplace_back(spot);
       }
     }
   }
@@ -95,6 +95,8 @@ bool Game::play(unsigned int i) {
 
   int turn;
 
+  std::cout << "Round: " << i << std::endl;
+
   if (i % 2 == 0) {
     std::cout << "It's " << pls[0]->getName() << " turn to play" << std::endl;
     turn = 0;
@@ -109,7 +111,7 @@ bool Game::play(unsigned int i) {
   int x, y;
   std::cout << "Available spots are:" << std::endl;
   for(auto const& value : spaces)
-    std::cout << "[" << value.first << "]" << " [" << value.second << "]" << " ";
+    std::cout << "[" << value.first << "]" << "[" << value.second << "]" << ", ";
   std::cout << std::endl;
   std::cout << "Type the numbers (that corresponds to a place in the map) to place the ball: ";
   std::cin >> x >> y;

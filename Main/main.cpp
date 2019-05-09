@@ -2,7 +2,7 @@
 
 #include "../Game/Game.h"
 
-int main(int argc, char const *argv[]) {
+int main() {
   Game g1;
 
   unsigned int i = 0;

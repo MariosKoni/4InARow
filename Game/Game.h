@@ -16,7 +16,7 @@ private:
   int currentRound;
   int choice;
 
-  std::vector<std::unique_ptr<Player>> pls;
+  std::vector<std::shared_ptr<Player>> pls;
   std::unique_ptr<getData> map;
 
   std::vector<std::pair<int, int>> spaces;

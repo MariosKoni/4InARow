@@ -37,3 +37,11 @@ int getData::getRows() {
 int getData::getCols() {
   return cols;
 }
+
+void getData::showStage() {
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j)
+      std::cout << stage[i][j];
+    std::cout << std::endl;
+  }
+}
