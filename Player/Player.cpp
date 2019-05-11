@@ -16,7 +16,6 @@ Player::Player() {
   char f = favColor[0];
   col.first = favColor;
   col.second = f;
-  std::cout << col.second << std::endl;
 }
 
 std::string Player::getName() {

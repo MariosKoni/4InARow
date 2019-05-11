@@ -23,11 +23,11 @@ Game::Game() {
 }
 
 bool Game::updateGame() {
-  currentRound++;
-  spaces.clear();
 
   if (currentRound > maxRounds)
     return false;
+
+  spaces.clear();
 
   return true;
 }
@@ -35,8 +35,8 @@ bool Game::updateGame() {
 void Game::checkAvailable() {
   for (int i = 1; i < map->getRows() - 1; ++i) {
     for (int j = 1; j < map->getCols() - 1; ++j) {
-      if (!map->checkStage(i, j, ' ')) {
-        std::pair<int ,int>spot(i, j - 1);
+      if (map->checkStage(i, j, ' ')) {
+        std::pair<int ,int>spot(i, j);
         spaces.emplace_back(spot);
       }
     }
@@ -46,37 +46,48 @@ void Game::checkAvailable() {
 bool Game::checkIfPlayerWon(char ch) {
   int counter = 0;
 
-  for (int i = 0; i < map->getRows(); ++i) {
-    for (int j = 0; j < map->getCols(); ++j) {
+  for (int i = 1; i < map->getRows() - 1; ++i) {
+    for (int j = 1; j < map->getCols() - 1; ++j) {
       if (map->checkStage(i, j, ch)) {
-        int x = 0;
-        int y = 0;
+        std::cout << "Entered with i = " << i << " j = " << j << " ch = " << ch << std::endl;
+        int x = i;
+        int y = j;
 
-        while (map->checkStage(x -1, y, ch)) {
-          i--;
+        //North
+        while (map->checkStage(x, y, ch)) {
+          x--;
           counter++;
         }
         if (counter == 4)
           return true;
 
+        //South
+        x = i;
+        y = j;
         counter = 0;
-        while (map->checkStage(x + 1, y, ch)) {
-          i++;
+        while (map->checkStage(x, y, ch)) {
+          x++;
           counter++;
         }
         if (counter == 4)
           return true;
 
+        //East
+        x = i;
+        y = j;
         counter = 0;
-        while (map->checkStage(x, y + 1, ch)) {
+        while (map->checkStage(x, y, ch)) {
           y++;
           counter++;
         }
         if (counter == 4)
           return true;
 
+        //West
+        x = i;
+        y = j;
         counter = 0;
-        while (map->checkStage(x, y - 1, ch)) {
+        while (map->checkStage(x, y, ch)) {
           y--;
           counter++;
         }
@@ -95,7 +106,7 @@ bool Game::play(unsigned int i) {
 
   int turn;
 
-  std::cout << "Round: " << i << std::endl;
+  std::cout << "Round: " << currentRound << std::endl;
 
   if (i % 2 == 0) {
     std::cout << "It's " << pls[0]->getName() << " turn to play" << std::endl;
@@ -105,6 +116,10 @@ bool Game::play(unsigned int i) {
     std::cout << "It's " << pls[1]->getName() << " turn to play" << std::endl;
     turn = 1;
   }
+
+  std::cout << std::endl;
+  map->showStage();
+  std::cout << std::endl;
 
   checkAvailable();
 
@@ -116,16 +131,23 @@ bool Game::play(unsigned int i) {
   std::cout << "Type the numbers (that corresponds to a place in the map) to place the ball: ";
   std::cin >> x >> y;
 
-  map->setToStage(x, y - 1, pls[turn]->getColor());
+  map->setToStage(x, y, pls[turn]->getColor());
 
   if (checkIfPlayerWon(pls[turn]->getColor())) {
+    currentRound++;
     pls[turn]->addScore();
-    if (!updateGame()) {
-      std::cout << "The game is over!\n" << pls[turn]->getName() << " has won!" << std::endl;
-      std::cout << "Score: " << pls[0]->getScore() << " : " << pls[1]->getScore() << std::endl;
+  }
+  if (!updateGame()) {
+    std::cout << "The game is over!" << std::endl;
+    if (pls[0]->getScore() > pls[1]->getScore())
+      std::cout << pls[0]->getName() << " has won!" << std::endl;
+    else if (pls[0]->getScore() < pls[1]->getScore())
+      std::cout << pls[1]->getName() << " has won!" << std::endl;
+    else
+      std::cout << "Its a draw!" << std::endl;
+    std::cout << "Score: " << pls[0]->getScore() << " : " << pls[1]->getScore() << std::endl;
 
-      return false;
-    }
+    return false;
   }
   system("clear");
 

@@ -6,7 +6,12 @@
 class getData {
 private:
   const std::string path = "/home/toomlg4u/4InARow/Data/initData.txt";
-  char stage[rows][cols];
+  char stage[rows][cols] = {'#', '#', '#', '#', '#', '#', '#',
+                            '#', ' ', ' ', ' ', ' ', ' ', '#',
+                            '#', ' ', ' ', ' ', ' ', ' ', '#',
+                            '#', ' ', ' ', ' ', ' ', ' ', '#',
+                            '#', ' ', ' ', ' ', ' ', ' ', '#',
+                            '#', '#', '#', '#', '#', '#', '#'};
 
 public:
   getData();

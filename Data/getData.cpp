@@ -3,21 +3,7 @@
 
 #include "getData.h"
 
-getData::getData() {
-  std::ifstream f(path);
-  std::string tmp;
-
-  std::cout << "Loading map..." << std::endl;
-
-  for (int i = 0; i < rows; i++) {
-    for (int j = 0; j < cols; j++)
-      f.get(stage[i][j]);
-  }
-
-  std::cout << "Map loaded!" << std::endl;
-
-  f.close();
-}
+getData::getData() {}
 
 bool getData::checkStage(int i, int j, char c) {
   if (stage[i][j] == c)
@@ -39,9 +25,16 @@ int getData::getCols() {
 }
 
 void getData::showStage() {
+  int h = 0;
+  for (int k = 0; k < cols; ++k)
+    std::cout << k;
+  std::cout << std::endl;
+
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < cols; ++j)
       std::cout << stage[i][j];
+    std::cout << " " << h;
+    h++;
     std::cout << std::endl;
   }
 }
