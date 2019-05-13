@@ -6,6 +6,7 @@
 #include <map>
 #include <utility>
 #include <vector>
+#include <cctype>
 
 Game::Game() {
   currentRound = 1;
@@ -14,7 +15,20 @@ Game::Game() {
   std::cout << "Select number of players\n1. One vs AI\n2. Two\nChoice: ";
   std::cin >> choice;
   for (int i = 0; i < choice; ++i) {
+    char c;
     std::shared_ptr<Player> pl(new Player());
+    if (i == 0)
+      c = pl->getColour();
+    if (i == 1 && (pl->getColour() == c)) {
+      std::cout << "\033[1;31mYou cannot have the same color as your opponent!\033[0m" << std::endl;
+      do {
+        std::string newColour;
+        std::cout << "New colour: ";
+        std::cin >> newColour;
+        std::cin.ignore();
+        pl->changeColour(std::toupper(newColour[0]));
+      } while(pl->getColour() == c);
+    }
     pls.emplace_back(pl);
   }
   std::cout << "Insert the number of rounds that will be played: ";
@@ -111,7 +125,7 @@ bool Game::play(unsigned int i) {
   int x, y;
   int turn;
 
-  std::cout << "Round: " << currentRound << std::endl;
+  std::cout << "\033[1;31mRound:\033[0m " << currentRound << std::endl;
 
   if (i % 2 == 0) {
     std::cout << "It's " << pls[0]->getName() << " turn to play" << std::endl;
@@ -129,7 +143,7 @@ bool Game::play(unsigned int i) {
   checkAvailable();
 
   if (!spaces.size()) {
-    std::cout << "No spots are available!" << std::endl;
+    std::cout << "\033[1;31mNo spots are available!\033[0m" << std::endl;
     resetGame();
     return true;
   }
@@ -142,9 +156,9 @@ bool Game::play(unsigned int i) {
   do {
     std::cout << "Type the numbers (that corresponds to a place in the map) to place the ball: ";
     std::cin >> x >> y;
-  } while(!map->setToStage(x, y, pls[turn]->getColor()));
+  } while(!map->setToStage(x, y, pls[turn]->getColour()));
 
-  if (checkIfPlayerWon(pls[turn]->getColor())) {
+  if (checkIfPlayerWon(pls[turn]->getColour())) {
     pls[turn]->addScore();
     resetGame();
   }

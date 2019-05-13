@@ -25,7 +25,7 @@ std::string Player::getName() {
   return name;
 }
 
-char Player::getColor() {
+char Player::getColour() {
   return col.second;
 }
 
@@ -35,4 +35,8 @@ int Player::getScore() {
 
 void Player::addScore() {
   score++;
+}
+
+void Player::changeColour(char c) {
+  col.second = c;
 }

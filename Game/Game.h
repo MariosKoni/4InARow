@@ -24,9 +24,9 @@ private:
 public:
   Game();
 
-  bool play(unsigned int i); //main game method
+  bool play(unsigned int); //main game method
   bool updateGame(); //method to erase vector and current round as well as check if the game has ended
   void checkAvailable(); //method that checks the available spots for the balls to be
-  bool checkIfPlayerWon(char ch); //Check if a player has won
+  bool checkIfPlayerWon(char); //Check if a player has won
   void resetGame(); //Calls map.reset() and increments the round
 };

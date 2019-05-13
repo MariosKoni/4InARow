@@ -16,10 +16,10 @@ private:
 public:
   getData();
 
-  bool setToStage(int i, int j, char v);
+  bool setToStage(int, int, char);
   int getRows();
   int getCols();
-  bool checkStage(int i, int j, char c);
+  bool checkStage(int, int, char);
   void showStage();
   void resetStage();
 };

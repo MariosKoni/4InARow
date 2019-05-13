@@ -16,7 +16,8 @@ public:
   Player();
 
   std::string getName();
-  char getColor();
+  char getColour();
   int getScore();
   void addScore();
+  void changeColour(char);
 };
