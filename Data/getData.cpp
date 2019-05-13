@@ -38,3 +38,16 @@ void getData::showStage() {
     std::cout << std::endl;
   }
 }
+
+void getData::resetStage() {
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j) {
+      if (i == 0 || i == rows)
+        stage[i][j] = '#';
+      if (j > 1 && j < cols)
+        stage[i][j] = ' ';
+      if (j == 0 || j == cols)
+        stage[i][j] = '#';
+    }
+  }
+}

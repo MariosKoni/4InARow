@@ -21,4 +21,5 @@ public:
   int getCols();
   bool checkStage(int i, int j, char c);
   void showStage();
+  void resetStage();
 };

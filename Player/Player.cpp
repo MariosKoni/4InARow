@@ -6,6 +6,8 @@
 #include <utility>
 
 Player::Player() {
+  score = 0;
+  
   std::cout << "Hello player what's your name ?" << std::endl;
   std::cout << "Name: ";
   std::cin.ignore();

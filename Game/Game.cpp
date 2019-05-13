@@ -20,6 +20,8 @@ Game::Game() {
   std::cout << "Insert the number of rounds that will be played: ";
   std::cin >> maxRounds;
   map = std::unique_ptr<getData>(new getData());
+
+  system("clear");
 }
 
 bool Game::updateGame() {
@@ -49,7 +51,6 @@ bool Game::checkIfPlayerWon(char ch) {
   for (int i = 1; i < map->getRows() - 1; ++i) {
     for (int j = 1; j < map->getCols() - 1; ++j) {
       if (map->checkStage(i, j, ch)) {
-        std::cout << "Entered with i = " << i << " j = " << j << " ch = " << ch << std::endl;
         int x = i;
         int y = j;
 
@@ -100,10 +101,14 @@ bool Game::checkIfPlayerWon(char ch) {
   return false;
 }
 
-bool Game::play(unsigned int i) {
-  int pls1 = 0;
-  int pls2 = 0;
+void Game::resetGame() {
+  std::cout << "No available spots are available!" << std::endl;
+  currentRound++;
+  map->resetStage();
+}
 
+bool Game::play(unsigned int i) {
+  int x, y;
   int turn;
 
   std::cout << "Round: " << currentRound << std::endl;
@@ -123,7 +128,11 @@ bool Game::play(unsigned int i) {
 
   checkAvailable();
 
-  int x, y;
+  if (!spaces.size()) {
+    resetGame();
+    return true;
+  }
+
   std::cout << "Available spots are:" << std::endl;
   for(auto const& value : spaces)
     std::cout << "[" << value.first << "]" << "[" << value.second << "]" << ", ";
@@ -136,6 +145,8 @@ bool Game::play(unsigned int i) {
   if (checkIfPlayerWon(pls[turn]->getColor())) {
     currentRound++;
     pls[turn]->addScore();
+
+    std::cout << pls[turn]->getName() << " scored!" << std::endl;
   }
   if (!updateGame()) {
     std::cout << "The game is over!" << std::endl;

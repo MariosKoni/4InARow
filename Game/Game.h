@@ -28,4 +28,5 @@ public:
   bool updateGame(); //method to erase vector and current round as well as check if the game has ended
   void checkAvailable(); //method that checks the available spots for the balls to be
   bool checkIfPlayerWon(char ch); //Check if a player has won
+  void resetGame(); //Calls map.reset() and increments the round
 };
