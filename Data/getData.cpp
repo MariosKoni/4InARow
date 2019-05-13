@@ -12,8 +12,13 @@ bool getData::checkStage(int i, int j, char c) {
     return false;
 }
 
-void getData::setToStage(int i, int j, char v) {
-  stage[i][j] = v;
+bool getData::setToStage(int i, int j, char v) {
+  if (checkStage(i, j, ' ')) {
+    stage[i][j] = v;
+    return true;
+  }
+
+  return false;
 }
 
 int getData::getRows() {
@@ -40,14 +45,8 @@ void getData::showStage() {
 }
 
 void getData::resetStage() {
-  for (int i = 0; i < rows; ++i) {
-    for (int j = 0; j < cols; ++j) {
-      if (i == 0 || i == rows)
-        stage[i][j] = '#';
-      if (j > 1 && j < cols)
-        stage[i][j] = ' ';
-      if (j == 0 || j == cols)
-        stage[i][j] = '#';
-    }
+  for (int i = 1; i < rows - 1; ++i) {
+    for (int j = 1; j < cols - 1; ++j)
+      stage[i][j] = ' ';
   }
 }

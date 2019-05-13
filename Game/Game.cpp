@@ -51,6 +51,7 @@ bool Game::checkIfPlayerWon(char ch) {
   for (int i = 1; i < map->getRows() - 1; ++i) {
     for (int j = 1; j < map->getCols() - 1; ++j) {
       if (map->checkStage(i, j, ch)) {
+        counter = 0;
         int x = i;
         int y = j;
 
@@ -102,7 +103,6 @@ bool Game::checkIfPlayerWon(char ch) {
 }
 
 void Game::resetGame() {
-  std::cout << "No available spots are available!" << std::endl;
   currentRound++;
   map->resetStage();
 }
@@ -129,6 +129,7 @@ bool Game::play(unsigned int i) {
   checkAvailable();
 
   if (!spaces.size()) {
+    std::cout << "No spots are available!" << std::endl;
     resetGame();
     return true;
   }
@@ -137,16 +138,15 @@ bool Game::play(unsigned int i) {
   for(auto const& value : spaces)
     std::cout << "[" << value.first << "]" << "[" << value.second << "]" << ", ";
   std::cout << std::endl;
-  std::cout << "Type the numbers (that corresponds to a place in the map) to place the ball: ";
-  std::cin >> x >> y;
 
-  map->setToStage(x, y, pls[turn]->getColor());
+  do {
+    std::cout << "Type the numbers (that corresponds to a place in the map) to place the ball: ";
+    std::cin >> x >> y;
+  } while(!map->setToStage(x, y, pls[turn]->getColor()));
 
   if (checkIfPlayerWon(pls[turn]->getColor())) {
-    currentRound++;
     pls[turn]->addScore();
-
-    std::cout << pls[turn]->getName() << " scored!" << std::endl;
+    resetGame();
   }
   if (!updateGame()) {
     std::cout << "The game is over!" << std::endl;

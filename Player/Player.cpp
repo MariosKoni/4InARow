@@ -4,10 +4,11 @@
 #include <string>
 #include <map>
 #include <utility>
+#include <cctype>
 
 Player::Player() {
   score = 0;
-  
+
   std::cout << "Hello player what's your name ?" << std::endl;
   std::cout << "Name: ";
   std::cin.ignore();
@@ -15,7 +16,7 @@ Player::Player() {
   std::cout << "So, " << name << ", what color do you prefer? Blue or red?" << std::endl;
   std::cout << "Color: ";
   std::cin >> favColor;
-  char f = favColor[0];
+  char f = std::toupper(favColor[0]);
   col.first = favColor;
   col.second = f;
 }
