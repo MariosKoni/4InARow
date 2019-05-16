@@ -8,7 +8,9 @@
 
 Player::Player() {
   score = 0;
+}
 
+void Player::setInfo() {
   std::cout << "Hello player what's your name ?" << std::endl;
   std::cout << "Name: ";
   std::cin.ignore();

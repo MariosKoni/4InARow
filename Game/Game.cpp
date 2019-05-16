@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "../Player/Player.h"
 #include "../Data/getData.h"
+#include "../NPC/NPC.h"
 
 #include <iostream>
 #include <map>
@@ -9,30 +10,74 @@
 #include <cctype>
 
 Game::Game() {
+  char ch;
   currentRound = 1;
 
   std::cout << "Welcome to " << gameTitle << "!" << std::endl;
   std::cout << "Select number of players\n1. One vs AI\n2. Two\nChoice: ";
-  std::cin >> choice;
-  for (int i = 0; i < choice; ++i) {
-    char c;
-    std::shared_ptr<Player> pl(new Player());
-    if (i == 0)
-      c = pl->getColour();
-    if (i == 1 && (pl->getColour() == c)) {
-      std::cout << "\033[1;31mYou cannot have the same color as your opponent!\033[0m" << std::endl;
-      do {
-        std::string newColour;
-        std::cout << "New colour: ";
-        std::cin >> newColour;
-        std::cin.ignore();
-        pl->changeColour(std::toupper(newColour[0]));
-      } while(pl->getColour() == c);
+  do {
+    std::cin >> choice;
+    if (choice < 1 || choice > 2)
+      std::cout << "Please give a proper option (1 or 2)!" << std::endl;
+  } while(choice < 1 || choice > 2);
+
+  switch (choice) {
+    case 1: {
+      char ch;
+
+      std::shared_ptr<Player> pl(new NPC());
+      pl->setInfo();
+      ch = pl->getColour();
+      pls.emplace_back(pl);
+
+      for (int i = 0; i < choice; ++i) {
+        char c;
+        std::shared_ptr<Player> pl(new Player());
+        pl->setInfo();
+        if (i == 0)
+          c = pl->getColour();
+        if ((i == 1 && (pl->getColour() == c)) || (pl->getColour() == ch)) {
+          std::cout << "\033[1;31mYou cannot have the same color as your opponent!\033[0m" << std::endl;
+          do {
+            std::string newColour;
+            std::cout << "New colour: ";
+            std::cin >> newColour;
+            std::cin.ignore();
+            pl->changeColour(std::toupper(newColour[0]));
+          } while(pl->getColour() == c);
+        }
+        pls.emplace_back(pl);
+      }
+
+      break;
     }
-    pls.emplace_back(pl);
+
+    case 2:
+      for (int i = 0; i < choice; ++i) {
+        char c;
+        std::shared_ptr<Player> pl(new Player());
+        pl->setInfo();
+        if (i == 0)
+          c = pl->getColour();
+        if ((i == 1 && (pl->getColour() == c)) || (pl->getColour() == ch)) {
+          std::cout << "\033[1;31mYou cannot have the same color as your opponent!\033[0m" << std::endl;
+          do {
+            std::string newColour;
+            std::cout << "New colour: ";
+            std::cin >> newColour;
+            std::cin.ignore();
+            pl->changeColour(std::toupper(newColour[0]));
+          } while(pl->getColour() == c);
+        }
+        pls.emplace_back(pl);
+      }
+
+      break;
   }
+
   std::cout << "Insert the number of rounds that will be played: ";
   std::cin >> maxRounds;
+
   map = std::unique_ptr<getData>(new getData());
 
   system("clear");
@@ -154,7 +199,7 @@ bool Game::play(unsigned int i) {
   std::cout << std::endl;
 
   do {
-    std::cout << "Type the numbers (that corresponds to a place in the map) to place the ball: ";
+    std::cout << "Type the row followed by a space and a column to place the ball: ";
     std::cin >> x >> y;
   } while(!map->setToStage(x, y, pls[turn]->getColour()));
 

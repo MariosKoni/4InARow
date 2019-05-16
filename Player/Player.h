@@ -5,7 +5,7 @@
 #include <utility>
 
 class Player {
-private:
+protected:
   std::string name;
   std::string favColor;
   std::pair<std::string, char> col;
@@ -15,6 +15,7 @@ private:
 public:
   Player();
 
+  virtual void setInfo();
   std::string getName();
   char getColour();
   int getScore();
