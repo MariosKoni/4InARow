@@ -1,10 +1,13 @@
 #include "Player.h"
 
+#include "../Data/getData.h"
+
 #include <iostream>
 #include <string>
 #include <map>
 #include <utility>
 #include <cctype>
+#include <memory>
 
 Player::Player() {
   score = 0;
@@ -43,8 +46,9 @@ void Player::changeColour(char c) {
   col.second = c;
 }
 
-void Player::generateCoordinates(std::vector<std::pair<int, int>> c){}
-std::pair<int, int> Player::getCoords() {
+//Dummies
+std::pair<int, int> Player::generateCoordinates(std::shared_ptr<getData> map, char ch){
   std::pair<int, int> dummy(-1, -1);
   return dummy;
 }
+void Player::insertCoords(int x, int y){}

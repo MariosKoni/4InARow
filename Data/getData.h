@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #define rows 6
 #define cols 7
 

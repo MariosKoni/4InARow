@@ -1,54 +1,162 @@
 #include "NPC.h"
 
+#include "../Data/getData.h"
+
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <utility>
+#include <memory>
 
 void NPC::setInfo() {
   srand(time(NULL));
 
   name = names[rand() % names.size()];
-  std::cout << "NPC name -> " << name << std::endl; //debug
   favColor = colours[rand() % colours.size()];
-  std::cout << "NPC colour -> " << favColor << std::endl; //debug
   char f = favColor[0];
   col.first = favColor;
   col.second = f;
+
+  std::cout << "Opponent: " << name << std::endl << "Colour: " << favColor << std::endl;
 }
 
-void NPC::generateCoordinates(std::vector<std::pair<int, int>> c) {
-  srand(time(NULL));
+std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char ch) {
+  //Checks if there are at least 2 balls next to each other and if the space of the next remaining
+  //blocks is sufficient for a win. If so, it blocks the player's momentum. If not, it places a ball next to its
+  //own balls.
+  int momentum = 0;
+  int x = playerCoords.first;
+  int y = playerCoords.second;
+  bool defend = false;
+  int threshold = 2;
+  int win = 4;
+  int attackWindow;
+  int empty = 0;
+  int _x, _y;
 
-  coords.first = rand() % findMax(1, c) + 1; //for x coordinates
-  coords.second = rand() % findMax(2, c) + 1; //for y coordinates
-}
+  std::pair<int, int> tmp;
 
-int NPC::findMax(int i, std::vector<std::pair<int, int>> c) {
-  int max;
+  //North
+  while (map->checkStage(x, y, ch)) {
+    x--;
+    momentum++;
+  }
+  if (momentum >= threshold) {
+    _x = playerCoords.first + 1;
+    x = playerCoords.first + 1;
+    attackWindow = win - momentum;
+    std::cout << attackWindow << std::endl;
 
-  switch (i) {
-    case 1:
-      max = c[0].first;
-      for(auto const& value : c) {
-        if (value.first > max)
-          max = value.first;
+    for (int i = 0; i < attackWindow; ++i) {
+      if (map->checkStage(x, y, ' ')) {
+        empty++;
+        x++;
       }
+    }
+    if (empty == attackWindow) {
+      defend = true;
+      tmp.first = _x;
+      tmp.second = y;
 
-      break;
-
-    case 2:
-      max = c[0].second;
-      for(auto const& value : c) {
-        if (value.second > max)
-          max = value.second;
-      }
-
-      break;
+      return tmp;
+    }
   }
 
-  return max;
+  //South
+  momentum = 0;
+  x = playerCoords.first;
+  y = playerCoords.second;
+
+  while (map->checkStage(x, y, ch)) {
+    x++;
+    momentum++;
+  }
+  if (momentum >= threshold) {
+    _x = playerCoords.first - 1;
+    x = playerCoords.first - 1;
+    attackWindow = win - momentum;
+    std::cout << attackWindow << std::endl;
+
+    for (int i = 0; i < attackWindow; ++i) {
+      if (map->checkStage(x, y, ' ')) {
+        empty++;
+        x--;
+      }
+    }
+    if (empty == attackWindow) {
+      defend = true;
+      tmp.first = _x;
+      tmp.second = y;
+
+      return tmp;
+    }
+  }
+
+  //East
+  momentum = 0;
+  x = playerCoords.first;
+  y = playerCoords.second;
+
+  while (map->checkStage(x, y, ch)) {
+    y++;
+    momentum++;
+  }
+  if (momentum >= threshold) {
+    _y = playerCoords.second - 1;
+    y = playerCoords.second - 1;
+    attackWindow = win - momentum;
+
+    for (int i = 0; i < attackWindow; ++i) {
+      if (map->checkStage(x, y, ' ')) {
+        empty++;
+        y--;
+      }
+    }
+    if (empty == attackWindow) {
+      defend = true;
+      tmp.first = x;
+      tmp.second = _y;
+
+      return tmp;
+    }
+  }
+
+  //West
+  momentum = 0;
+  x = playerCoords.first;
+  y = playerCoords.second;
+
+  while (map->checkStage(x, y, ch)) {
+    y--;
+    momentum++;
+  }
+  if (momentum >= threshold) {
+    _y = playerCoords.second + 1;
+    y = playerCoords.second + 1;
+    attackWindow = win - momentum;
+
+    for (int i = 0; i < attackWindow; ++i) {
+      if (map->checkStage(x, y, ' ')) {
+        empty++;
+        y++;
+      }
+    }
+    if (empty == attackWindow) {
+      defend = true;
+      tmp.first = x;
+      tmp.second = _y;
+
+      return tmp;
+    }
+  }
+
+  //Add attack mode to AI
+  tmp.first = -1;
+  tmp.second = -1;
+  return tmp;
 }
 
-std::pair<int, int> NPC::getCoords() {
-  return coords;
+void NPC::insertCoords(int x, int y) {
+  playerCoords.first = x;
+  playerCoords.second = y;
 }

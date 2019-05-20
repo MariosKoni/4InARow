@@ -1,9 +1,12 @@
 #pragma once
 
+#include "../Data/getData.h"
+
 #include <string>
 #include <map>
 #include <utility>
 #include <vector>
+#include <memory>
 
 class Player {
 protected:
@@ -22,6 +25,6 @@ public:
   int getScore();
   void addScore();
   void changeColour(char);
-  virtual void generateCoordinates(std::vector<std::pair<int, int>>);
-  virtual std::pair<int, int> getCoords();
+  virtual std::pair<int, int> generateCoordinates(std::shared_ptr<getData>, char);
+  virtual void insertCoords(int, int);
 };

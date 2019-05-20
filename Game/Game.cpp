@@ -24,6 +24,7 @@ Game::Game() {
   } while(choice < 1 || choice > 2);
 
   switch (choice) {
+    //Player vs AI
     case 1: {
       char ch;
 
@@ -54,6 +55,7 @@ Game::Game() {
       break;
     }
 
+    //Two (physical) players
     case 2:
       for (int i = 0; i < choice; ++i) {
         char c;
@@ -262,13 +264,13 @@ bool Game::play(unsigned int i) {
             std::cout << "Type the row followed by a space and a column to place the ball: ";
             std::cin >> x >> y;
           } while(!map->setToStage(x, y, pls[turn]->getColour()));
+          pls[0]->insertCoords(x, y);
         } else {
             std::cout << pls[0]->getName() << " is thinking...kinda..." << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
-            pls[0]->generateCoordinates(spaces);
-            std::pair<int, int> tmp = pls[0]->getCoords();
-            //std::cout << tmp.first << std::endl << tmp.second << std::endl; //debug
+            std::pair<int, int> tmp = pls[0]->generateCoordinates(map, pls[1]->getColour());
+            std::cout << tmp.first << std::endl << tmp.second << std::endl; //debug
             map->setToStage(tmp.first, tmp.second, pls[0]->getColour());
         }
 
@@ -292,6 +294,6 @@ bool Game::play(unsigned int i) {
         break;
     }
 
-    system("clear");
+    //system("clear");
     return true;
 }
