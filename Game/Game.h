@@ -18,7 +18,6 @@ private:
   int choice;
 
   std::vector<std::shared_ptr<Player>> pls;
-  std::shared_ptr<NPC> npc;
   std::unique_ptr<getData> map;
 
   std::vector<std::pair<int, int>> spaces;

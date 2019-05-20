@@ -14,6 +14,7 @@ private:
 
 public:
   void setInfo();
-  std::pair<int, int> generateCoordinates(std::vector<std::pair<int, int>>);
+  void generateCoordinates(std::vector<std::pair<int, int>>);
   int findMax(int, std::vector<std::pair<int, int>>);
+  std::pair<int, int> getCoords();
 };

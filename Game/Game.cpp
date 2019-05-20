@@ -8,6 +8,8 @@
 #include <utility>
 #include <vector>
 #include <cctype>
+#include <chrono>
+#include <thread>
 
 Game::Game() {
   char ch;
@@ -172,54 +174,124 @@ bool Game::play(unsigned int i) {
 
   std::cout << "\033[1;31mRound:\033[0m " << currentRound << std::endl;
 
-  if (i % 2 == 0) {
-    std::cout << "It's " << pls[0]->getName() << " turn to play" << std::endl;
-    turn = 0;
-  }
-  else {
-    std::cout << "It's " << pls[1]->getName() << " turn to play" << std::endl;
-    turn = 1;
-  }
+  switch(choice) {
+    //Two (physical) players
+    case 2:
+      if (i % 2 == 0) {
+        std::cout << "It's " << pls[0]->getName() << " turn to play" << std::endl;
+        turn = 0;
+      }
+      else {
+        std::cout << "It's " << pls[1]->getName() << " turn to play" << std::endl;
+        turn = 1;
+      }
 
-  std::cout << std::endl;
-  map->showStage();
-  std::cout << std::endl;
+      std::cout << std::endl;
+      map->showStage();
+      std::cout << std::endl;
 
-  checkAvailable();
+      checkAvailable();
 
-  if (!spaces.size()) {
-    std::cout << "\033[1;31mNo spots are available!\033[0m" << std::endl;
-    resetGame();
+      if (!spaces.size()) {
+        std::cout << "\033[1;31mNo spots are available!\033[0m" << std::endl;
+        resetGame();
+        return true;
+      }
+
+      std::cout << "Available spots are:" << std::endl;
+      for(auto const& value : spaces)
+        std::cout << "[" << value.first << "]" << "[" << value.second << "]" << ", ";
+      std::cout << std::endl;
+
+      do {
+        std::cout << "Type the row followed by a space and a column to place the ball: ";
+        std::cin >> x >> y;
+      } while(!map->setToStage(x, y, pls[turn]->getColour()));
+
+      if (checkIfPlayerWon(pls[turn]->getColour())) {
+        pls[turn]->addScore();
+        resetGame();
+      }
+      if (!updateGame()) {
+        std::cout << "The game is over!" << std::endl;
+        if (pls[0]->getScore() > pls[1]->getScore())
+          std::cout << pls[0]->getName() << " has won!" << std::endl;
+        else if (pls[0]->getScore() < pls[1]->getScore())
+          std::cout << pls[1]->getName() << " has won!" << std::endl;
+        else
+          std::cout << "Its a draw!" << std::endl;
+        std::cout << "Score: " << pls[0]->getScore() << " : " << pls[1]->getScore() << std::endl;
+
+        return false;
+      }
+
+      break;
+
+      //Player vs AI
+      case 1:
+        if (i % 2 == 0) {
+          std::cout << "It's " << pls[0]->getName() << " turn to play" << std::endl;
+          turn = 0;
+        }
+        else {
+          std::cout << "It's " << pls[1]->getName() << " turn to play" << std::endl;
+          turn = 1;
+        }
+
+        if (turn == 1) {
+          std::cout << std::endl;
+          map->showStage();
+          std::cout << std::endl;
+        }
+
+        checkAvailable();
+
+        if (!spaces.size()) {
+          std::cout << "\033[1;31mNo spots are available!\033[0m" << std::endl;
+          resetGame();
+          return true;
+        }
+
+        if (turn == 1) {
+          std::cout << "Available spots are:" << std::endl;
+          for(auto const& value : spaces)
+            std::cout << "[" << value.first << "]" << "[" << value.second << "]" << ", ";
+          std::cout << std::endl;
+
+          do {
+            std::cout << "Type the row followed by a space and a column to place the ball: ";
+            std::cin >> x >> y;
+          } while(!map->setToStage(x, y, pls[turn]->getColour()));
+        } else {
+            std::cout << pls[0]->getName() << " is thinking...kinda..." << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+
+            pls[0]->generateCoordinates(spaces);
+            std::pair<int, int> tmp = pls[0]->getCoords();
+            //std::cout << tmp.first << std::endl << tmp.second << std::endl; //debug
+            map->setToStage(tmp.first, tmp.second, pls[0]->getColour());
+        }
+
+        if (checkIfPlayerWon(pls[turn]->getColour())) {
+          pls[turn]->addScore();
+          resetGame();
+        }
+        if (!updateGame()) {
+          std::cout << "The game is over!" << std::endl;
+          if (pls[0]->getScore() > pls[1]->getScore())
+            std::cout << pls[0]->getName() << " has won!" << std::endl;
+          else if (pls[0]->getScore() < pls[1]->getScore())
+            std::cout << pls[1]->getName() << " has won!" << std::endl;
+          else
+            std::cout << "Its a draw!" << std::endl;
+          std::cout << "Score: " << pls[0]->getScore() << " : " << pls[1]->getScore() << std::endl;
+
+          return false;
+        }
+
+        break;
+    }
+
+    system("clear");
     return true;
-  }
-
-  std::cout << "Available spots are:" << std::endl;
-  for(auto const& value : spaces)
-    std::cout << "[" << value.first << "]" << "[" << value.second << "]" << ", ";
-  std::cout << std::endl;
-
-  do {
-    std::cout << "Type the row followed by a space and a column to place the ball: ";
-    std::cin >> x >> y;
-  } while(!map->setToStage(x, y, pls[turn]->getColour()));
-
-  if (checkIfPlayerWon(pls[turn]->getColour())) {
-    pls[turn]->addScore();
-    resetGame();
-  }
-  if (!updateGame()) {
-    std::cout << "The game is over!" << std::endl;
-    if (pls[0]->getScore() > pls[1]->getScore())
-      std::cout << pls[0]->getName() << " has won!" << std::endl;
-    else if (pls[0]->getScore() < pls[1]->getScore())
-      std::cout << pls[1]->getName() << " has won!" << std::endl;
-    else
-      std::cout << "Its a draw!" << std::endl;
-    std::cout << "Score: " << pls[0]->getScore() << " : " << pls[1]->getScore() << std::endl;
-
-    return false;
-  }
-  system("clear");
-
-  return true;
 }

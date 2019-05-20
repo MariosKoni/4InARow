@@ -6,7 +6,7 @@
 
 void NPC::setInfo() {
   srand(time(NULL));
-  
+
   name = names[rand() % names.size()];
   std::cout << "NPC name -> " << name << std::endl; //debug
   favColor = colours[rand() % colours.size()];
@@ -16,13 +16,11 @@ void NPC::setInfo() {
   col.second = f;
 }
 
-std::pair<int, int> NPC::generateCoordinates(std::vector<std::pair<int, int>> c) {
+void NPC::generateCoordinates(std::vector<std::pair<int, int>> c) {
   srand(time(NULL));
 
-  coords.first = rand() % findMax(1, c) + 1;
-  coords.second = rand() % findMax(2, c) + 1;
-
-  return coords;
+  coords.first = rand() % findMax(1, c) + 1; //for x coordinates
+  coords.second = rand() % findMax(2, c) + 1; //for y coordinates
 }
 
 int NPC::findMax(int i, std::vector<std::pair<int, int>> c) {
@@ -49,4 +47,8 @@ int NPC::findMax(int i, std::vector<std::pair<int, int>> c) {
   }
 
   return max;
+}
+
+std::pair<int, int> NPC::getCoords() {
+  return coords;
 }

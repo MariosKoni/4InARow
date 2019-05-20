@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <utility>
+#include <vector>
 
 class Player {
 protected:
@@ -21,4 +22,6 @@ public:
   int getScore();
   void addScore();
   void changeColour(char);
+  virtual void generateCoordinates(std::vector<std::pair<int, int>>);
+  virtual std::pair<int, int> getCoords();
 };

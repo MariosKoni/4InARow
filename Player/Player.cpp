@@ -42,3 +42,9 @@ void Player::addScore() {
 void Player::changeColour(char c) {
   col.second = c;
 }
+
+void Player::generateCoordinates(std::vector<std::pair<int, int>> c){}
+std::pair<int, int> Player::getCoords() {
+  std::pair<int, int> dummy(-1, -1);
+  return dummy;
+}
