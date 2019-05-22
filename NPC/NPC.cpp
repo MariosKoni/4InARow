@@ -20,21 +20,63 @@ void NPC::setInfo() {
   std::cout << "Opponent: " << name << std::endl << "Colour: " << favColor << std::endl;
 }
 
-std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char ch) {
+std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char ch, unsigned int i) {
   //Checks if there are at least 2 balls next to each other and if the space of the next remaining
-  //blocks is sufficient for a win. If so, it blocks the player's momentum. If not, it places a ball next to its
-  //own balls.
+  //blocks is sufficient for a win using needToDefend method. If so, it blocks the player's momentum.
+  //If not, it places a ball next to its own balls.
+
+  //If it's the first turn of the round then compute a random x,y pos.
+  if (!i) {
+    srand(time(NULL));
+
+    npcCoords.first = rand() % (rows - 2) + 1;
+    npcCoords.second = rand() % (cols - 2) + 1;
+
+    return npcCoords;
+  }
+
+  if (needToDefend(map, ch))
+    return npcCoords;
+  else {
+    for (int i = 1; i < map->getRows() - 1; ++i) {
+      for (int j = 1; j < map->getCols() - 1; ++j) {
+        if (map->checkStage(i, j, col.second)) {
+          //North
+          if (map->checkStage(i - 1, j, ' ')) {
+            npcCoords.first = i - 1;
+            npcCoords.second = j;
+            return npcCoords;
+            //South
+          } else if (map->checkStage(i + 1, j, ' ')) {
+            npcCoords.first = i + 1;
+            npcCoords.second = j;
+            return npcCoords;
+            //East
+          } else if (map->checkStage(i, j + 1, ' ')) {
+            npcCoords.first = i;
+            npcCoords.second = j + 1;
+            return npcCoords;
+            //West
+          } else {
+            npcCoords.first = i;
+            npcCoords.second = j - 1;
+            return npcCoords;
+          }
+        }
+      }
+    }
+  }
+}
+
+bool NPC::needToDefend(std::shared_ptr<getData> map, char ch) {
   int momentum = 0;
   int x = playerCoords.first;
   int y = playerCoords.second;
-  bool defend = false;
   int threshold = 2;
   int win = 4;
   int attackWindow;
   int empty = 0;
   int _x, _y;
-
-  std::pair<int, int> tmp;
 
   //North
   while (map->checkStage(x, y, ch)) {
@@ -45,7 +87,6 @@ std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char 
     _x = playerCoords.first + 1;
     x = playerCoords.first + 1;
     attackWindow = win - momentum;
-    std::cout << attackWindow << std::endl;
 
     for (int i = 0; i < attackWindow; ++i) {
       if (map->checkStage(x, y, ' ')) {
@@ -54,11 +95,10 @@ std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char 
       }
     }
     if (empty == attackWindow) {
-      defend = true;
-      tmp.first = _x;
-      tmp.second = y;
+      npcCoords.first = _x;
+      npcCoords.second = y;
 
-      return tmp;
+      return true;
     }
   }
 
@@ -75,7 +115,6 @@ std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char 
     _x = playerCoords.first - 1;
     x = playerCoords.first - 1;
     attackWindow = win - momentum;
-    std::cout << attackWindow << std::endl;
 
     for (int i = 0; i < attackWindow; ++i) {
       if (map->checkStage(x, y, ' ')) {
@@ -84,11 +123,10 @@ std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char 
       }
     }
     if (empty == attackWindow) {
-      defend = true;
-      tmp.first = _x;
-      tmp.second = y;
+      npcCoords.first = _x;
+      npcCoords.second = y;
 
-      return tmp;
+      return true;
     }
   }
 
@@ -113,11 +151,10 @@ std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char 
       }
     }
     if (empty == attackWindow) {
-      defend = true;
-      tmp.first = x;
-      tmp.second = _y;
+      npcCoords.first = x;
+      npcCoords.second = _y;
 
-      return tmp;
+      return true;
     }
   }
 
@@ -142,18 +179,14 @@ std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char 
       }
     }
     if (empty == attackWindow) {
-      defend = true;
-      tmp.first = x;
-      tmp.second = _y;
+      npcCoords.first = x;
+      npcCoords.second = _y;
 
-      return tmp;
+      return true;
     }
   }
 
-  //Add attack mode to AI
-  tmp.first = -1;
-  tmp.second = -1;
-  return tmp;
+  return false;
 }
 
 void NPC::insertCoords(int x, int y) {

@@ -47,8 +47,9 @@ void Player::changeColour(char c) {
 }
 
 //Dummies
-std::pair<int, int> Player::generateCoordinates(std::shared_ptr<getData> map, char ch){
+std::pair<int, int> Player::generateCoordinates(std::shared_ptr<getData> map, char ch, unsigned int i){
   std::pair<int, int> dummy(-1, -1);
   return dummy;
 }
 void Player::insertCoords(int x, int y){}
+bool Player::needToDefend(std::shared_ptr<getData> map, char ch){return false;}

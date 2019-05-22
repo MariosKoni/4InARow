@@ -269,7 +269,7 @@ bool Game::play(unsigned int i) {
             std::cout << pls[0]->getName() << " is thinking...kinda..." << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
-            std::pair<int, int> tmp = pls[0]->generateCoordinates(map, pls[1]->getColour());
+            std::pair<int, int> tmp = pls[0]->generateCoordinates(map, pls[1]->getColour(), i);
             std::cout << tmp.first << std::endl << tmp.second << std::endl; //debug
             map->setToStage(tmp.first, tmp.second, pls[0]->getColour());
         }
