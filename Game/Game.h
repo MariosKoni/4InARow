@@ -16,6 +16,7 @@ private:
   int maxRounds;
   int currentRound;
   int choice;
+  int i;
 
   std::vector<std::shared_ptr<Player>> pls;
   std::shared_ptr<getData> map;
@@ -25,9 +26,10 @@ private:
 public:
   Game();
 
-  bool play(unsigned int); //main game method
+  bool play(); //main game method
   bool updateGame(); //method to erase vector and current round as well as check if the game has ended (round wise)
   void checkAvailable(); //method that checks the available spots for the balls to be
   bool checkIfPlayerWon(char); //Check if a player has won
   void resetGame(); //Calls map.reset() and increments the round
+  void checkWinner(); //Checks who has won the game
 };

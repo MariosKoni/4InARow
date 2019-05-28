@@ -25,7 +25,7 @@ public:
   int getScore();
   void addScore();
   void changeColour(char);
-  virtual std::pair<int, int> generateCoordinates(std::shared_ptr<getData>, char, unsigned int);
+  virtual std::pair<int, int> generateCoordinates(std::shared_ptr<getData>, char, int);
   virtual bool needToDefend(std::shared_ptr<getData>, char);
   virtual void insertCoords(int, int);
 };

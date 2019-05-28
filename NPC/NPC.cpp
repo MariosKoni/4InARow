@@ -20,7 +20,7 @@ void NPC::setInfo() {
   std::cout << "Opponent: " << name << std::endl << "Colour: " << favColor << std::endl;
 }
 
-std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char ch, unsigned int i) {
+std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char ch, int i) {
   //Checks if there are at least 2 balls next to each other and if the space of the next remaining
   //blocks is sufficient for a win using needToDefend method. If so, it blocks the player's momentum.
   //If not, it places a ball next to its own balls.
@@ -57,7 +57,7 @@ std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char 
             npcCoords.second = j + 1;
             return npcCoords;
             //West
-          } else {
+          } else if (map->checkStage(i, j - 1, ' ')) {
             npcCoords.first = i;
             npcCoords.second = j - 1;
             return npcCoords;

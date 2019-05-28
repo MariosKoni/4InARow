@@ -14,6 +14,7 @@
 Game::Game() {
   char ch;
   currentRound = 1;
+  i = 0;
 
   std::cout << "Welcome to " << gameTitle << "!" << std::endl;
   std::cout << "Select number of players\n1. One vs AI\n2. Two\nChoice: ";
@@ -93,6 +94,7 @@ bool Game::updateGame() {
     return false;
 
   spaces.clear();
+  i++;
 
   return true;
 }
@@ -168,9 +170,21 @@ bool Game::checkIfPlayerWon(char ch) {
 void Game::resetGame() {
   currentRound++;
   map->resetStage();
+  i = 0;
 }
 
-bool Game::play(unsigned int i) {
+void Game::checkWinner() {
+  std::cout << "The game is over!" << std::endl;
+  if (pls[0]->getScore() > pls[1]->getScore())
+    std::cout << pls[0]->getName() << " has won!" << std::endl;
+  else if (pls[0]->getScore() < pls[1]->getScore())
+    std::cout << pls[1]->getName() << " has won!" << std::endl;
+  else
+    std::cout << "Its a draw!" << std::endl;
+  std::cout << "Score: " << pls[0]->getScore() << " : " << pls[1]->getScore() << std::endl;
+}
+
+bool Game::play() {
   int x, y;
   int turn;
 
@@ -196,8 +210,14 @@ bool Game::play(unsigned int i) {
 
       if (!spaces.size()) {
         std::cout << "\033[1;31mNo spots are available!\033[0m" << std::endl;
-        resetGame();
-        return true;
+
+        if (!updateGame()) {
+          checkWinner();
+          return false;
+        } else {
+          resetGame();
+          return true;
+        }
       }
 
       std::cout << "Available spots are:" << std::endl;
@@ -215,14 +235,7 @@ bool Game::play(unsigned int i) {
         resetGame();
       }
       if (!updateGame()) {
-        std::cout << "The game is over!" << std::endl;
-        if (pls[0]->getScore() > pls[1]->getScore())
-          std::cout << pls[0]->getName() << " has won!" << std::endl;
-        else if (pls[0]->getScore() < pls[1]->getScore())
-          std::cout << pls[1]->getName() << " has won!" << std::endl;
-        else
-          std::cout << "Its a draw!" << std::endl;
-        std::cout << "Score: " << pls[0]->getScore() << " : " << pls[1]->getScore() << std::endl;
+        checkWinner();
 
         return false;
       }
@@ -250,8 +263,14 @@ bool Game::play(unsigned int i) {
 
         if (!spaces.size()) {
           std::cout << "\033[1;31mNo spots are available!\033[0m" << std::endl;
-          resetGame();
-          return true;
+
+          if (!updateGame()) {
+            checkWinner();
+            return false;
+          } else {
+            resetGame();
+            return true;
+          }
         }
 
         if (turn == 1) {
@@ -268,25 +287,21 @@ bool Game::play(unsigned int i) {
         } else {
             std::cout << pls[0]->getName() << " is thinking...kinda..." << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+            std::pair<int, int> tmp;
 
-            std::pair<int, int> tmp = pls[0]->generateCoordinates(map, pls[1]->getColour(), i);
-            std::cout << tmp.first << std::endl << tmp.second << std::endl; //debug
-            map->setToStage(tmp.first, tmp.second, pls[0]->getColour());
+            do {
+              tmp = pls[0]->generateCoordinates(map, pls[1]->getColour(), i);
+            } while(!map->setToStage(tmp.first, tmp.second, pls[0]->getColour()));
         }
 
         if (checkIfPlayerWon(pls[turn]->getColour())) {
           pls[turn]->addScore();
           resetGame();
+
+          return true;
         }
         if (!updateGame()) {
-          std::cout << "The game is over!" << std::endl;
-          if (pls[0]->getScore() > pls[1]->getScore())
-            std::cout << pls[0]->getName() << " has won!" << std::endl;
-          else if (pls[0]->getScore() < pls[1]->getScore())
-            std::cout << pls[1]->getName() << " has won!" << std::endl;
-          else
-            std::cout << "Its a draw!" << std::endl;
-          std::cout << "Score: " << pls[0]->getScore() << " : " << pls[1]->getScore() << std::endl;
+          checkWinner();
 
           return false;
         }

@@ -18,9 +18,13 @@ void Player::setInfo() {
   std::cout << "Name: ";
   std::cin.ignore();
   std::getline(std::cin, name);
-  std::cout << "So, " << name << ", what color do you prefer? Blue or red?" << std::endl;
-  std::cout << "Color: ";
-  std::cin >> favColor;
+  std::cout << "So, " << name << ", what color do you prefer? Blue or Red?" << std::endl;
+  do {
+    std::cout << "Color: ";
+    std::cin >> favColor;
+    if (favColor.compare("Blue") != 0 && favColor.compare("blue") != 0 && favColor.compare("Red") != 0 && favColor.compare("red") != 0)
+      std::cout << "Type Blue/Red" << std::endl;
+  } while (favColor.compare("Blue") != 0 && favColor.compare("blue") != 0 && favColor.compare("Red") != 0 && favColor.compare("red") != 0);
   char f = std::toupper(favColor[0]);
   col.first = favColor;
   col.second = f;
@@ -47,7 +51,7 @@ void Player::changeColour(char c) {
 }
 
 //Dummies
-std::pair<int, int> Player::generateCoordinates(std::shared_ptr<getData> map, char ch, unsigned int i){
+std::pair<int, int> Player::generateCoordinates(std::shared_ptr<getData> map, char ch, int i){
   std::pair<int, int> dummy(-1, -1);
   return dummy;
 }
