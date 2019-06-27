@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "../Player/Player.h"
+#include "../Data/getData.h"
 
 class NPC : public Player {
 private:

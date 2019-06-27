@@ -10,80 +10,172 @@
 #include <cctype>
 #include <chrono>
 #include <thread>
+#include <fstream>
 
-Game::Game() {
-  char ch;
-  currentRound = 1;
-  i = 0;
+void Game::save() {
+  std::ofstream dataFile;
+  dataFile.open(path);
 
-  std::cout << "Welcome to " << gameTitle << "!" << std::endl;
-  std::cout << "Select number of players\n1. One vs AI\n2. Two\nChoice: ";
-  do {
-    std::cin >> choice;
-    if (choice < 1 || choice > 2)
-      std::cout << "Please give a proper option (1 or 2)!" << std::endl;
-  } while(choice < 1 || choice > 2);
-
-  switch (choice) {
-    //Player vs AI
-    case 1: {
-      char ch;
-
-      std::shared_ptr<Player> pl(new NPC());
-      pl->setInfo();
-      ch = pl->getColour();
-      pls.emplace_back(pl);
-
-      for (int i = 0; i < choice; ++i) {
-        char c;
-        std::shared_ptr<Player> pl(new Player());
-        pl->setInfo();
-        if (i == 0)
-          c = pl->getColour();
-        if ((i == 1 && (pl->getColour() == c)) || (pl->getColour() == ch)) {
-          std::cout << "\033[1;31mYou cannot have the same color as your opponent!\033[0m" << std::endl;
-          do {
-            std::string newColour;
-            std::cout << "New colour: ";
-            std::cin >> newColour;
-            std::cin.ignore();
-            pl->changeColour(std::toupper(newColour[0]));
-          } while(pl->getColour() == c);
-        }
-        pls.emplace_back(pl);
+  if (dataFile.is_open()) {
+    if (!dataFile.bad()) {
+      // Write whole map in file
+      dataFile << "Data" << std::endl;
+      for (int i = 1; i < rows - 1; ++i) {
+        for (int j = 1; j < cols - 1; ++j)
+          dataFile << i << j << map->getArray(i, j) << std::endl;
       }
 
-      break;
+      // Write game data in file
+      dataFile << "Game" << std::endl;
+      dataFile << maxRounds << std::endl;
+      dataFile << currentRound << std::endl;
+      dataFile << choice << std::endl;
+      dataFile << i << std::endl;
+
+      // Write player data in file
+      dataFile << "Player" << std::endl;
+      for (int i = 0; i < pls.size(); ++i) {
+        dataFile << pls[i]->getName() << std::endl;
+        dataFile << pls[i]->getColF() << std::endl;
+        dataFile << pls[i]->getColour() << std::endl;
+        dataFile << pls[i]->getScore() << std::endl;
+      }
     }
-
-    //Two (physical) players
-    case 2:
-      for (int i = 0; i < choice; ++i) {
-        char c;
-        std::shared_ptr<Player> pl(new Player());
-        pl->setInfo();
-        if (i == 0)
-          c = pl->getColour();
-        if ((i == 1 && (pl->getColour() == c)) || (pl->getColour() == ch)) {
-          std::cout << "\033[1;31mYou cannot have the same color as your opponent!\033[0m" << std::endl;
-          do {
-            std::string newColour;
-            std::cout << "New colour: ";
-            std::cin >> newColour;
-            std::cin.ignore();
-            pl->changeColour(std::toupper(newColour[0]));
-          } while(pl->getColour() == c);
-        }
-        pls.emplace_back(pl);
-      }
-
-      break;
   }
 
-  std::cout << "Insert the number of rounds that will be played: ";
-  std::cin >> maxRounds;
+  dataFile.close();
+}
 
-  map = std::unique_ptr<getData>(new getData());
+void Game::load() {
+  std::ifstream dataFile;
+  dataFile.open(path);
+
+  if (dataFile.is_open()) {
+    if (!dataFile.bad()) {
+      //Dummy reading
+      std::string tmp;
+      std::getline(dataFile, tmp);
+
+      //Load map
+      std::getline(dataFile, tmp);
+      while (tmp.compare("Game") != 0) {
+        map->setToStage((tmp[0] - '0'), (tmp[1] - '0'), tmp[2]);
+        std::getline(dataFile, tmp);
+      }
+
+      //Load the game data
+      std::getline(dataFile, tmp);
+      maxRounds = std::stoi(tmp, NULL);
+      std::getline(dataFile, tmp);
+      currentRound = std::stoi(tmp, NULL);
+      std::getline(dataFile, tmp);
+      choice = std::stoi(tmp, NULL);
+      std::getline(dataFile, tmp);
+      i = std::stoi(tmp, NULL);
+
+      //Dummy reading
+      std::getline(dataFile, tmp);
+
+      //Load the player data
+      for (int i = 0; i < pls.size(); ++i) {
+        std::getline(dataFile, tmp);
+        pls[i]->setName(tmp);
+        std::getline(dataFile, tmp);
+        pls[i]->setColour1(tmp);
+        std::getline(dataFile, tmp);
+        pls[i]->setColour2(tmp[0]);
+        std::getline(dataFile, tmp);
+        pls[i]->setScore(std::stoi(tmp, NULL));
+      }
+    }
+  }
+
+  dataFile.close();
+}
+
+Game::Game(bool isGameNew) {
+  //If user selected a new game
+  if (isGameNew) {
+    char ch;
+    currentRound = 1;
+    i = 0;
+
+    std::cout << "Select number of players\n1. One vs AI\n2. Two\nChoice: ";
+    do {
+      std::cin >> choice;
+      if (choice < 1 || choice > 2)
+        std::cout << "Please give a proper option (1 or 2)!" << std::endl;
+    } while(choice < 1 || choice > 2);
+
+    switch (choice) {
+      //Player vs AI
+      case 1: {
+        char ch;
+
+        std::shared_ptr<Player> plN(new NPC());
+        plN->setInfo();
+        ch = plN->getColour();
+        pls.emplace_back(plN);
+
+        char c;
+        std::shared_ptr<Player> pl(new Player());
+        pl->setInfo();
+        c = pl->getColour();
+        if (c == ch) {
+          std::cout << "\033[1;31mYou cannot have the same color as your opponent!\033[0m" << std::endl;
+          do {
+            std::string newColour;
+            std::cout << "New colour: ";
+            std::cin >> newColour;
+            std::cin.ignore();
+            pl->changeColour(std::toupper(newColour[0]));
+          } while(pl->getColour() == c);
+        }
+        pls.emplace_back(pl);
+
+        break;
+      }
+
+      //Two (physical) players
+      case 2:
+        for (int i = 0; i < choice; ++i) {
+          char c;
+          std::shared_ptr<Player> pl(new Player());
+          pl->setInfo();
+          if (i == 0)
+            c = pl->getColour();
+          if ((i == 1 && (pl->getColour() == c)) || (pl->getColour() == ch)) {
+            std::cout << "\033[1;31mYou cannot have the same color as your opponent!\033[0m" << std::endl;
+            do {
+              std::string newColour;
+              std::cout << "New colour: ";
+              std::cin >> newColour;
+              std::cin.ignore();
+              pl->changeColour(std::toupper(newColour[0]));
+            } while(pl->getColour() == c);
+          }
+          pls.emplace_back(pl);
+        }
+
+        break;
+    }
+
+    std::cout << "Insert the number of rounds that will be played: ";
+    std::cin >> maxRounds;
+
+    map = std::unique_ptr<getData>(new getData());
+
+  } else { //If user selected load game
+    std::shared_ptr<Player> plN(new NPC());
+    pls.emplace_back(plN);
+    std::shared_ptr<Player> pl(new Player());
+    pls.emplace_back(pl);
+    map = std::unique_ptr<getData>(new getData());
+
+    load();
+    std::cout << "Game loaded!" << std::endl << "Press any key to play...";
+    getchar();
+  }
 
   system("clear");
 }
@@ -187,6 +279,7 @@ void Game::checkWinner() {
 bool Game::play() {
   int x, y;
   int turn;
+  int opt;
 
   std::cout << "\033[1;31mRound:\033[0m " << currentRound << std::endl;
 
@@ -225,10 +318,31 @@ bool Game::play() {
         std::cout << "[" << value.first << "]" << "[" << value.second << "]" << ", ";
       std::cout << std::endl;
 
+      std::cout << "Options:\n1. Type coordinates (continue game)\n2. Save current game and exit\n3. Exit\nChoice: ";
       do {
-        std::cout << "Type the row followed by a space and a column to place the ball: ";
-        std::cin >> x >> y;
-      } while(!map->setToStage(x, y, pls[turn]->getColour()));
+        std::cin >> opt;
+        std::cin.ignore();
+        if (opt < 1 || opt > 3)
+          std::cout << "Please give a proper option (1 or 2 or 3)!" << std::endl;
+      } while(opt < 1 || opt > 3);
+
+      switch (opt) {
+        case 1:
+          do {
+            std::cout << "Type the row followed by a space and a column to place the ball: ";
+            std::cin >> x >> y;
+          } while(!map->setToStage(x, y, pls[turn]->getColour()));
+
+          break;
+
+        case 2:
+          save();
+          std::cout << "Game saved!" << std::endl;
+          return false;
+
+        case 3:
+          return false;
+      }
 
       if (checkIfPlayerWon(pls[turn]->getColour())) {
         pls[turn]->addScore();
@@ -279,10 +393,31 @@ bool Game::play() {
             std::cout << "[" << value.first << "]" << "[" << value.second << "]" << ", ";
           std::cout << std::endl;
 
+          std::cout << "Options:\n1. Type coordinates (continue game)\n2. Save current game and exit\n3. Exit\nChoice: ";
           do {
-            std::cout << "Type the row followed by a space and a column to place the ball: ";
-            std::cin >> x >> y;
-          } while(!map->setToStage(x, y, pls[turn]->getColour()));
+            std::cin >> opt;
+            std::cin.ignore();
+            if (opt < 1 || opt > 3) 
+              std::cout << "Please give a proper option (1 or 2 or 3)!" << std::endl;
+          } while(opt < 1 || opt > 3);
+
+          switch (opt) {
+            case 1:
+              do {
+                std::cout << "Type the row followed by a space and a column to place the ball: ";
+                std::cin >> x >> y;
+              } while(!map->setToStage(x, y, pls[turn]->getColour()));
+
+              break;
+
+            case 2:
+              save();
+              std::cout << "Game saved!" << std::endl;
+              return false;
+
+            case 3:
+              return false;
+          }
           pls[0]->insertCoords(x, y);
         } else {
             std::cout << pls[0]->getName() << " is thinking...kinda..." << std::endl;
@@ -309,6 +444,6 @@ bool Game::play() {
         break;
     }
 
-    //system("clear");
+    system("clear");
     return true;
 }

@@ -1,7 +1,6 @@
-#include <iostream>
-#include <fstream>
-
 #include "getData.h"
+
+#include <iostream>
 
 getData::getData() {}
 
@@ -14,8 +13,8 @@ bool getData::checkStage(int i, int j, char c) {
 
 bool getData::setToStage(int i, int j, char v) {
   if (checkStage(i, j, ' ')) {
-    stage[i][j] = v;
-    return true;
+      stage[i][j] = v;
+      return true;
   }
 
   return false;
@@ -49,4 +48,8 @@ void getData::resetStage() {
     for (int j = 1; j < cols - 1; ++j)
       stage[i][j] = ' ';
   }
+}
+
+char getData::getArray(int i, int j) {
+  return stage[i][j];
 }

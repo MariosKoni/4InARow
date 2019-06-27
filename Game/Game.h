@@ -12,7 +12,7 @@
 
 class Game {
 private:
-  const std::string gameTitle = "4 in a row";
+  const std::string path = "/home/toomlg4u/4InARow/Game/Saves/Data.txt";
   int maxRounds;
   int currentRound;
   int choice;
@@ -24,7 +24,7 @@ private:
   std::vector<std::pair<int, int>> spaces;
 
 public:
-  Game();
+  Game(bool); //Constructor of the main class. Takes a bool that determines if it's a new or an old game
 
   bool play(); //main game method
   bool updateGame(); //method to erase vector and current round as well as check if the game has ended (round wise)
@@ -32,4 +32,6 @@ public:
   bool checkIfPlayerWon(char); //Check if a player has won
   void resetGame(); //Calls map.reset() and increments the round
   void checkWinner(); //Checks who has won the game
+  void save(); //Saves data of current game to file
+  void load(); //Loads a snapshot of the game and continues from there
 };

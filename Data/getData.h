@@ -7,7 +7,6 @@
 
 class getData {
 private:
-  const std::string path = "/home/toomlg4u/4InARow/Data/initData.txt";
   char stage[rows][cols] = {'#', '#', '#', '#', '#', '#', '#',
                             '#', ' ', ' ', ' ', ' ', ' ', '#',
                             '#', ' ', ' ', ' ', ' ', ' ', '#',
@@ -24,4 +23,5 @@ public:
   bool checkStage(int, int, char);
   void showStage();
   void resetStage();
+  char getArray(int, int);
 };
