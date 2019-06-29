@@ -9,14 +9,17 @@
 #include <utility>
 #include <vector>
 #include <memory>
+#include <filesystem>
 
 class Game {
 private:
-  const std::string path = "/home/toomlg4u/4InARow/Game/Saves/Data.txt";
+  const std::filesystem::path p{ "/home/toomlg4u/4InARow/Game/Saves/" };
+  std::string path = "/home/toomlg4u/4InARow/Game/Saves/";
   int maxRounds;
   int currentRound;
   int choice;
   int i;
+  bool canPlay = true;
 
   std::vector<std::shared_ptr<Player>> pls;
   std::shared_ptr<getData> map;
@@ -33,5 +36,6 @@ public:
   void resetGame(); //Calls map.reset() and increments the round
   void checkWinner(); //Checks who has won the game
   void save(); //Saves data of current game to file
-  void load(); //Loads a snapshot of the game and continues from there
+  bool load(); //Loads a snapshot of the game and continues from there
+  bool getCanPlay(); //Returns the value of the attribute
 };

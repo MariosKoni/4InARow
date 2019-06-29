@@ -11,7 +11,7 @@ int main() {
     std::cout << "1. New game" << std::endl;
     std::cout << "2. Load game" << std::endl;
     std::cout << "3. Quit" << std::endl;
-    std::cout << "Choice: ";
+    std::cout << "\nChoice: ";
     std::cin >> choice;
     std::cin.ignore();
 
@@ -26,7 +26,9 @@ int main() {
       case 2: {
         Game g2(false);
 
-        while(g2.play()){}
+        if (g2.getCanPlay()) {
+          while(g2.play()){}
+        }
 
         break;
       }

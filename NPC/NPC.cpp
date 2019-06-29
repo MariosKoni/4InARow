@@ -66,6 +66,11 @@ std::pair<int, int> NPC::generateCoordinates(std::shared_ptr<getData> map, char 
       }
     }
   }
+
+  //Dummy just to get rid of warning
+  npcCoords.first = -1;
+  npcCoords.second = -1;
+  return npcCoords;
 }
 
 bool NPC::needToDefend(std::shared_ptr<getData> map, char ch) {

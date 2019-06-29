@@ -11,10 +11,42 @@
 #include <chrono>
 #include <thread>
 #include <fstream>
+#include <filesystem>
 
 void Game::save() {
-  std::ofstream dataFile;
-  dataFile.open(path);
+  std::string saveFileName;
+  std::string nSave;
+  char answ;
+
+  std::cout << "Save file name: ";
+  std::getline(std::cin, saveFileName);
+  nSave = path + saveFileName;
+  if (nSave.find(".txt") == std::string::npos)
+    nSave = path + saveFileName + ".txt";
+  for(auto& p : std::filesystem::directory_iterator(p)) {
+    if (p.path().string().compare(nSave) == 0) {
+      std::cout << "\"" << nSave << "\" already exists!" << std::endl << "Do you wish to overwrite it? (y/n): ";
+      std::cin >> answ;
+      std::cin.ignore();
+      switch (answ) {
+        case 'Y':
+        case 'y': {
+          break;
+        }
+        case 'N':
+        case 'n':
+          std::cout << "Save file name: ";
+          std::getline(std::cin, saveFileName);
+          nSave = path + saveFileName;
+          if (nSave.find(".txt") == std::string::npos)
+            nSave = path + saveFileName + ".txt";
+          break;
+      }
+      break;
+    }
+  }
+
+  std::ofstream dataFile(nSave);
 
   if (dataFile.is_open()) {
     if (!dataFile.bad()) {
@@ -46,51 +78,83 @@ void Game::save() {
   dataFile.close();
 }
 
-void Game::load() {
+bool Game::load() {
   std::ifstream dataFile;
-  dataFile.open(path);
+  bool hasFilesToLoad;
 
-  if (dataFile.is_open()) {
-    if (!dataFile.bad()) {
-      //Dummy reading
-      std::string tmp;
-      std::getline(dataFile, tmp);
+  int ch;
+  int offset = 0;
+  std::vector<std::string> loadFiles;
+  std::cout << "Select save file to load (by typing the number)" << std::endl;
+  for(auto& p : std::filesystem::directory_iterator(p))
+    loadFiles.emplace_back(p.path().string());
 
-      //Load map
-      std::getline(dataFile, tmp);
-      while (tmp.compare("Game") != 0) {
-        map->setToStage((tmp[0] - '0'), (tmp[1] - '0'), tmp[2]);
-        std::getline(dataFile, tmp);
-      }
+  if (loadFiles.size()) {
+    hasFilesToLoad = true;
+    for (auto const& file : loadFiles)
+      std::cout << ++offset << ". " << file << std::endl;
+  } else {
+      hasFilesToLoad = false;
+      std::cout << "There are no files to load from..." << std::endl;
+    }
 
-      //Load the game data
-      std::getline(dataFile, tmp);
-      maxRounds = std::stoi(tmp, NULL);
-      std::getline(dataFile, tmp);
-      currentRound = std::stoi(tmp, NULL);
-      std::getline(dataFile, tmp);
-      choice = std::stoi(tmp, NULL);
-      std::getline(dataFile, tmp);
-      i = std::stoi(tmp, NULL);
+  if (hasFilesToLoad) {
+    do {
+      std::cout << "Choice: ";
+      std::cin >> ch;
+      std::cin.ignore();
+      if (ch < 1 || ch > loadFiles.size())
+        std::cout << "Give a valid number!" << std::endl;
+    } while (ch < 1 || ch > loadFiles.size());
 
-      //Dummy reading
-      std::getline(dataFile, tmp);
+    dataFile.open(loadFiles[ch - 1]);
 
-      //Load the player data
-      for (int i = 0; i < pls.size(); ++i) {
+    if (dataFile.is_open()) {
+      if (!dataFile.bad()) {
+        //Dummy reading
+        std::string tmp;
         std::getline(dataFile, tmp);
-        pls[i]->setName(tmp);
+
+        //Load map
         std::getline(dataFile, tmp);
-        pls[i]->setColour1(tmp);
+        while (tmp.compare("Game") != 0) {
+          map->setToStage((tmp[0] - '0'), (tmp[1] - '0'), tmp[2]);
+          std::getline(dataFile, tmp);
+        }
+
+        //Load the game data
         std::getline(dataFile, tmp);
-        pls[i]->setColour2(tmp[0]);
+        maxRounds = std::stoi(tmp, NULL);
         std::getline(dataFile, tmp);
-        pls[i]->setScore(std::stoi(tmp, NULL));
+        currentRound = std::stoi(tmp, NULL);
+        std::getline(dataFile, tmp);
+        choice = std::stoi(tmp, NULL);
+        std::getline(dataFile, tmp);
+        i = std::stoi(tmp, NULL);
+
+        //Dummy reading
+        std::getline(dataFile, tmp);
+
+        //Load the player data
+        for (int i = 0; i < pls.size(); ++i) {
+          std::getline(dataFile, tmp);
+          pls[i]->setName(tmp);
+          std::getline(dataFile, tmp);
+          pls[i]->setColour1(tmp);
+          std::getline(dataFile, tmp);
+          pls[i]->setColour2(tmp[0]);
+          std::getline(dataFile, tmp);
+          pls[i]->setScore(std::stoi(tmp, NULL));
+        }
       }
     }
+
+    dataFile.close();
+
+    return true;
   }
 
-  dataFile.close();
+  return false;
 }
 
 Game::Game(bool isGameNew) {
@@ -172,9 +236,11 @@ Game::Game(bool isGameNew) {
     pls.emplace_back(pl);
     map = std::unique_ptr<getData>(new getData());
 
-    load();
-    std::cout << "Game loaded!" << std::endl << "Press any key to play...";
-    getchar();
+    if (load()) {
+      std::cout << "Game loaded!" << std::endl << "Press any key to play...";
+      getchar();
+    } else
+        canPlay = false;
   }
 
   system("clear");
@@ -331,13 +397,15 @@ bool Game::play() {
           do {
             std::cout << "Type the row followed by a space and a column to place the ball: ";
             std::cin >> x >> y;
+            std::cin.ignore();
           } while(!map->setToStage(x, y, pls[turn]->getColour()));
 
           break;
 
         case 2:
           save();
-          std::cout << "Game saved!" << std::endl;
+          std::cout << "Game saved!" << std::endl << "Press any key to continue...";
+          getchar();
           return false;
 
         case 3:
@@ -397,7 +465,7 @@ bool Game::play() {
           do {
             std::cin >> opt;
             std::cin.ignore();
-            if (opt < 1 || opt > 3) 
+            if (opt < 1 || opt > 3)
               std::cout << "Please give a proper option (1 or 2 or 3)!" << std::endl;
           } while(opt < 1 || opt > 3);
 
@@ -406,13 +474,16 @@ bool Game::play() {
               do {
                 std::cout << "Type the row followed by a space and a column to place the ball: ";
                 std::cin >> x >> y;
+                std::cin.ignore();
               } while(!map->setToStage(x, y, pls[turn]->getColour()));
 
               break;
 
             case 2:
               save();
-              std::cout << "Game saved!" << std::endl;
+              std::cout << "Game saved!" << std::endl << "Press any key to continue...";
+              getchar();
+
               return false;
 
             case 3:
@@ -446,4 +517,8 @@ bool Game::play() {
 
     system("clear");
     return true;
+}
+
+bool Game::getCanPlay() {
+  return canPlay;
 }
