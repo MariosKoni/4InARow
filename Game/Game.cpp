@@ -12,6 +12,22 @@
 #include <thread>
 #include <fstream>
 #include <filesystem>
+#include <sstream>
+
+void Game::remindPlayer() {
+  std::cout << "Welcome back! Let's be reminded of some things before the game..." << std::endl;
+  std::cout << "Round " << currentRound << "/" << maxRounds << std::endl;
+  if (choice == 1) {
+    std::cout << "You are playing against an A.I" << std::endl;
+    std::cout << "Your ingame player name is " << pls[1]->getName() << std::endl;
+    std::cout << "You have the " << pls[1]->getColF() << " balls" << std::endl;
+  } else {
+    for (auto const& player : pls) {
+      std::cout << "Your ingame player name is " << player->getName() << std::endl;
+      std::cout << "You have the " << player->getColF() << " balls" << std::endl;
+    }
+  }
+}
 
 void Game::save() {
   std::string saveFileName;
@@ -83,29 +99,84 @@ bool Game::load() {
   bool hasFilesToLoad;
 
   int ch;
+  int select;
   int offset = 0;
+  bool exit = false;
   std::vector<std::string> loadFiles;
-  std::cout << "Select save file to load (by typing the number)" << std::endl;
+
   for(auto& p : std::filesystem::directory_iterator(p))
     loadFiles.emplace_back(p.path().string());
 
   if (loadFiles.size()) {
     hasFilesToLoad = true;
-    for (auto const& file : loadFiles)
-      std::cout << ++offset << ". " << file << std::endl;
+
+    do {
+      #ifdef __linux__
+      system("clear");
+      #elif _WIN32
+      system("cls");
+      #endif
+
+      std::cout << "Select save file to load (by typing the number) after you choose from the menu" << std::endl;
+      for (auto const& file : loadFiles)
+        std::cout << ++offset << ". " << file << std::endl;
+
+      std::cout << "\n1. Load from file" << std::endl << "2. Delete load file" << std::endl << "3. Back" << std::endl;
+      std::cout << "Choice: ";
+      do {
+        std::cin >> select;
+        std::cin.ignore();
+        if (select < 1 || select > 3)
+          std::cout << "Give a valid choice!" << std::endl;
+      } while (select < 1 || select > 3);
+
+      switch (select) {
+        case 1:
+          do {
+            std::cout << "Number of file to load: ";
+            std::cin >> ch;
+            std::cin.ignore();
+            if (ch < 1 || ch > loadFiles.size())
+              std::cout << "Give a valid number!" << std::endl;
+          } while (ch < 1 || ch > loadFiles.size());
+          exit = true;
+
+          break;
+        case 2:
+          do {
+            std::cout << "Number of file to delete: ";
+            std::cin >> ch;
+            std::cin.ignore();
+            if (ch < 1 || ch > loadFiles.size())
+              std::cout << "Give a valid number!" << std::endl;
+          } while (ch < 1 || ch > loadFiles.size());
+
+          p.replace_filename(loadFiles[ch - 1]);
+          std::filesystem::remove(p);
+          p.replace_filename(path);
+          std::cout << "Load file removed!" << std::endl;
+          std::cout << "Press any key to continue..." << std::endl;
+          getchar();
+          exit = false;
+
+          break;
+        case 3:
+          exit = true;
+          hasFilesToLoad = false; //Only for the load function to end
+          break;
+      }
+
+      offset = 0;
+    } while (!exit);
+
   } else {
       hasFilesToLoad = false;
       std::cout << "There are no files to load from..." << std::endl;
+      std::cout << "Press any key to continue...";
+      getchar();
     }
 
   if (hasFilesToLoad) {
-    do {
-      std::cout << "Choice: ";
-      std::cin >> ch;
-      std::cin.ignore();
-      if (ch < 1 || ch > loadFiles.size())
-        std::cout << "Give a valid number!" << std::endl;
-    } while (ch < 1 || ch > loadFiles.size());
 
     dataFile.open(loadFiles[ch - 1]);
 
@@ -158,6 +229,40 @@ bool Game::load() {
 }
 
 Game::Game(bool isGameNew) {
+  std::vector<std::string> tempStore;
+  std::string item;
+  std::stringstream pp(p.string());
+  std::string correctPath;
+
+  #ifdef __linux__
+  while (std::getline (pp, item, '/')) {
+    if (item.compare("Main") == 0)
+      continue;
+    tempStore.emplace_back(item);
+    tempStore.emplace_back("/");
+  }
+  for (auto const& str : tempStore)
+    correctPath += str;
+  correctPath += "Game/Saves/";
+  path = correctPath;
+  p.replace_filename(path);
+  #elif _WIN32
+  std::cout << "WIP" << std::endl;
+  while (std::getline (pp, item, '\\')) {
+    if (item.compare("Main") == 0)
+      continue;
+    tempStore.emplace_back(item);
+    tempStore.emplace_back("\\");
+  }
+  for (auto const& str : tempStore)
+    correctPath += str;
+  correctPath += "Game/Saves/";
+  path = correctPath;
+  p.replace_filename(path);
+  std::cout << correctPath << std::endl;
+  getchar();
+  #endif
+
   //If user selected a new game
   if (isGameNew) {
     char ch;
@@ -237,13 +342,18 @@ Game::Game(bool isGameNew) {
     map = std::unique_ptr<getData>(new getData());
 
     if (load()) {
+      remindPlayer();
       std::cout << "Game loaded!" << std::endl << "Press any key to play...";
       getchar();
     } else
         canPlay = false;
   }
 
+  #ifdef __linux__
   system("clear");
+  #elif _WIN32
+  system("cls");
+  #endif
 }
 
 bool Game::updateGame() {
@@ -515,7 +625,11 @@ bool Game::play() {
         break;
     }
 
+    #ifdef __linux__
     system("clear");
+    #elif _WIN32
+    system("cls");
+    #endif
     return true;
 }
 

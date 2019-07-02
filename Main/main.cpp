@@ -6,7 +6,11 @@ int main() {
   int choice;
 
   do {
+    #ifdef __linux__
     system("clear");
+    #elif _WIN32
+    system("cls");
+    #endif
     std::cout << "Welcome to 4 in a row!" << std::endl;
     std::cout << "1. New game" << std::endl;
     std::cout << "2. Load game" << std::endl;

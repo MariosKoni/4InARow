@@ -19,7 +19,6 @@ protected:
 public:
   Player();
 
-  virtual void setInfo();
   std::string getName();
   char getColour();
   void addScore();
@@ -31,6 +30,7 @@ public:
   void setColour2(char);
   void setScore(int);
 
+  virtual void setInfo();
   virtual std::pair<int, int> generateCoordinates(std::shared_ptr<getData>, char, int);
   virtual bool needToDefend(std::shared_ptr<getData>, char);
   virtual void insertCoords(int, int);
