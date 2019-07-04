@@ -235,32 +235,33 @@ Game::Game(bool isGameNew) {
   std::string correctPath;
 
   #if defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
-  while (std::getline (pp, item, '/')) {
-    if (item.compare("Main") == 0)
-      continue;
-    tempStore.emplace_back(item);
-    tempStore.emplace_back("/");
-  }
-  for (auto const& str : tempStore)
-    correctPath += str;
-  correctPath += "Game/Saves/";
-  path = correctPath;
-  p.replace_filename(path);
+    while (std::getline (pp, item, '/')) {
+      if (item.compare("Main") == 0)
+        continue;
+      tempStore.emplace_back(item);
+      tempStore.emplace_back("/");
+    }
+    for (auto const& str : tempStore)
+      correctPath += str;
+    correctPath += "Game/Saves/";
+    path = correctPath;
+    p.replace_filename(path);
+    if (!std::filesystem::is_directory(p))
+      std::filesystem::create_directory(p);
   #elif _WIN32
-  std::cout << "WIP" << std::endl;
-  while (std::getline (pp, item, '\\')) {
-    if (item.compare("Main") == 0)
-      continue;
-    tempStore.emplace_back(item);
-    tempStore.emplace_back("\\");
-  }
-  for (auto const& str : tempStore)
-    correctPath += str;
-  correctPath += "Game/Saves/";
-  path = correctPath;
-  p.replace_filename(path);
-  std::cout << correctPath << std::endl;
-  getchar();
+    while (std::getline (pp, item, '\\')) {
+      if (item.compare("Main") == 0)
+        continue;
+      tempStore.emplace_back(item);
+      tempStore.emplace_back("\\");
+    }
+    for (auto const& str : tempStore)
+      correctPath += str;
+    correctPath += "Game/Saves/";
+    path = correctPath;
+    p.replace_filename(path);
+    if (!std::filesystem::is_directory(p))
+      std::filesystem::create_directory(p);
   #endif
 
   //If user selected a new game
