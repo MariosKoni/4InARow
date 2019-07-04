@@ -6,7 +6,7 @@ int main() {
   int choice;
 
   do {
-    #ifdef __linux__
+    #if defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
     system("clear");
     #elif _WIN32
     system("cls");

@@ -111,7 +111,7 @@ bool Game::load() {
     hasFilesToLoad = true;
 
     do {
-      #ifdef __linux__
+      #if defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
       system("clear");
       #elif _WIN32
       system("cls");
@@ -234,7 +234,7 @@ Game::Game(bool isGameNew) {
   std::stringstream pp(p.string());
   std::string correctPath;
 
-  #ifdef __linux__
+  #if defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
   while (std::getline (pp, item, '/')) {
     if (item.compare("Main") == 0)
       continue;
@@ -268,6 +268,12 @@ Game::Game(bool isGameNew) {
     char ch;
     currentRound = 1;
     i = 0;
+
+    #if defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
+    system("clear");
+    #elif _WIN32
+    system("cls");
+    #endif
 
     std::cout << "Select number of players\n1. One vs AI\n2. Two\nChoice: ";
     do {
@@ -442,6 +448,12 @@ void Game::resetGame() {
 }
 
 void Game::checkWinner() {
+  #if defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
+  system("clear");
+  #elif _WIN32
+  system("cls");
+  #endif
+
   std::cout << "The game is over!" << std::endl;
   if (pls[0]->getScore() > pls[1]->getScore())
     std::cout << pls[0]->getName() << " has won!" << std::endl;
@@ -450,6 +462,8 @@ void Game::checkWinner() {
   else
     std::cout << "Its a draw!" << std::endl;
   std::cout << "Score: " << pls[0]->getScore() << " : " << pls[1]->getScore() << std::endl;
+  std::cout << "Press any key to continue...";
+  getchar();
 }
 
 bool Game::play() {
@@ -619,13 +633,14 @@ bool Game::play() {
         if (!updateGame()) {
           checkWinner();
 
+
           return false;
         }
 
         break;
     }
 
-    #ifdef __linux__
+    #if defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
     system("clear");
     #elif _WIN32
     system("cls");
