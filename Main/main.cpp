@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "../Game/Game.h"
+#include "../Game/Game.hh"
 
 int main() {
   int choice;
