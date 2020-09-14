@@ -16,7 +16,6 @@ Player::Player() {
 void Player::setInfo() {
   std::cout << "Hello player what's your name ?" << std::endl;
   std::cout << "Name: ";
-  std::cin.ignore();
   std::getline(std::cin, name);
   std::cout << "So, " << name << ", what color do you prefer? Blue or Red?" << std::endl;
   do {
@@ -24,7 +23,8 @@ void Player::setInfo() {
     std::cin >> favColor;
     std::cin.ignore();
     if (favColor.compare("Blue") != 0 && favColor.compare("blue") != 0 && favColor.compare("Red") != 0 && favColor.compare("red") != 0) {
-      std::cout << "Type Blue/Red" << std::endl;
+      std::cout << "Type Blue/Red!" << std::endl;
+      std::cout << "Color: ";
       std::cin >> favColor;
     }
   } while (favColor.compare("Blue") != 0 && favColor.compare("blue") != 0 && favColor.compare("Red") != 0 && favColor.compare("red") != 0);
@@ -57,11 +57,11 @@ std::string Player::getColF() {
   return col.first;
 }
 
-void Player::setName(std::string n) {
+void Player::setName(std::string &n) {
   name = n;
 }
 
-void Player::setColour1(std::string c1) {
+void Player::setColour1(std::string &c1) {
   col.first = c1;
 }
 

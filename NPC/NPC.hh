@@ -10,7 +10,7 @@
 
 class NPC : public Player {
 private:
-  std::vector<std::string> names {"Oliver", "Jack", "Harry", "Jacob", "Charlie", "Marios", "Amelia", "Olivia", "Isla", "Emily", "Poppy", "Deppy"};
+  std::vector<std::string> names {"Oliver", "Jack", "Harry", "Jacob", "Charlie", "Marios", "Amelia", "Olivia", "Isla", "Emily", "Poppy", "Deppy", "Philip"};
   std::vector<std::string> colours {"Blue", "Red"};
 
   std::pair<int, int> playerCoords;

@@ -1,7 +1,9 @@
 #include "Game.h"
-#include "../Player/Player.h"
-#include "../Data/getData.h"
-#include "../NPC/NPC.h"
+#include "../Player/Player.hh"
+#include "../Data/getData.hh"
+#include "../NPC/NPC.hh"
+#include "../Network/Client.hh"
+#include "../Network/Server.hh"
 
 #include <iostream>
 #include <map>
@@ -276,12 +278,12 @@ Game::Game(bool isGameNew) {
     system("cls");
     #endif
 
-    std::cout << "Select number of players\n1. One vs AI\n2. Two\nChoice: ";
+    std::cout << "Select number of players\n1. One vs AI\n2. Two\n3. Multiplayer(W.I.P)\nChoice: ";
     do {
       std::cin >> choice;
-      if (choice < 1 || choice > 2)
-        std::cout << "Please give a proper option (1 or 2)!" << std::endl;
-    } while(choice < 1 || choice > 2);
+      if (choice < 1 || choice > 3)
+        std::cout << "Please give a proper option (1, 2 or 3)!" << std::endl;
+    } while(choice < 1 || choice > 3);
 
     switch (choice) {
       //Player vs AI
@@ -333,6 +335,10 @@ Game::Game(bool isGameNew) {
           pls.emplace_back(pl);
         }
 
+        break;
+
+      case 3:
+        std::cout << "Work in progress..." << std::endl;
         break;
     }
 

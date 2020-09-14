@@ -25,8 +25,8 @@ public:
   void changeColour(char);
   std::string getColF();
   int getScore();
-  void setName(std::string);
-  void setColour1(std::string);
+  void setName(std::string&);
+  void setColour1(std::string&);
   void setColour2(char);
   void setScore(int);
 

@@ -1,9 +1,9 @@
 # 4InARow
 Terminal based board-game with full functionality.
 
-The creation of "4InARow" was inpired some day in April when bored I decided to search for a game to play online and accidentaly found myself playing it. It was a chill and easy game to play. I wanted to expand my C++ knowledge so I thought why not and made it.
+The creation of "4InARow" was inspired some day in April when bored I decided to search for a game to play online and accidentally found myself playing it. It was a chill and easy game to play. I wanted to expand my C++ knowledge so I thought why not and made it.
 
-The game is terminal based of course. So it's not so appealing to the eye BUT I have plans to make a GUI version of it. Nonetheless, it has a full menu with the ability to load a game or start a new one, save a game while playing it if you need to leave and delete a save file aswell. You can also play against a friend or against A.I (basic ofcourse nothing really special). It is also combatible with Linux, Windows, Mac.
+The game is terminal based of course. So it's not so appealing to the eye BUT I have plans to make a GUI version of it. Nonetheless, it has a full menu with the ability to load a game or start a new one, save a game while playing it if you need to leave and delete a save file as well. You can also play against a friend or against A.I (basic of course nothing really special). It is also compatible with Linux, Windows, Mac.
 
 So the game is not so complex, though I made sure I give it a great polish look. Sure the code could be better and the game aswell but for me was great and considering from where I started back in April (it didn't take that long but I had to abandoned it for a month to focus in my work at Uni) it's a great achievement.
 
