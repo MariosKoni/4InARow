@@ -2,8 +2,6 @@
 #include "../Player/Player.hh"
 #include "../Data/getData.hh"
 #include "../NPC/NPC.hh"
-#include "../Network/Client.hh"
-#include "../Network/Server.hh"
 
 #include <iostream>
 #include <map>
