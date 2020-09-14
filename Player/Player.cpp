@@ -1,6 +1,6 @@
-#include "Player.h"
+#include "Player.hh"
 
-#include "../Data/getData.h"
+#include "../Data/getData.hh"
 
 #include <iostream>
 #include <string>

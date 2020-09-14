@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Data/getData.h"
+#include "../Data/getData.hh"
 
 #include <string>
 #include <map>

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../Player/Player.h"
-#include "../Data/getData.h"
-#include "../NPC/NPC.h"
+#include "../Player/Player.hh"
+#include "../Data/getData.hh"
+#include "../NPC/NPC.hh"
 
 #include <string>
 #include <list>

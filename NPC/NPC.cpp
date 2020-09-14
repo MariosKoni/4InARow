@@ -1,6 +1,6 @@
-#include "NPC.h"
+#include "NPC.hh"
 
-#include "../Data/getData.h"
+#include "../Data/getData.hh"
 
 #include <iostream>
 #include <cstdlib>
