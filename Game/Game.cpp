@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "Game.hh"
 #include "../Player/Player.hh"
 #include "../Data/getData.hh"
 #include "../NPC/NPC.hh"
