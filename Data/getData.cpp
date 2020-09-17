@@ -35,8 +35,14 @@ void getData::showStage() {
   std::cout << std::endl;
 
   for (int i = 0; i < rows; ++i) {
-    for (int j = 0; j < cols; ++j)
-      std::cout << stage[i][j];
+    for (int j = 0; j < cols; ++j) {
+      if (stage[i][j] == 'B')
+        std::cout << "\033[1;34m" << stage[i][j] << "\033[0m";
+      else if (stage[i][j] == 'R')
+        std::cout << "\033[1;31m" << stage[i][j] << "\033[0m";
+      else
+        std::cout << stage[i][j];
+    }
     std::cout << " " << h;
     h++;
     std::cout << std::endl;

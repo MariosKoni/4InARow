@@ -276,12 +276,13 @@ Game::Game(bool isGameNew) {
     system("cls");
     #endif
 
-    std::cout << "Select number of players\n1. One vs AI\n2. Two\n3. Multiplayer(W.I.P)\nChoice: ";
+    std::cout << "Select the mode\n1. One vs AI\n2. Two\n3. Multiplayer(W.I.P)\nChoice: ";
     do {
       std::cin >> choice;
       if (choice < 1 || choice > 3)
         std::cout << "Please give a proper option (1, 2 or 3)!" << std::endl;
     } while(choice < 1 || choice > 3);
+    std::cin.ignore();
 
     switch (choice) {
       //Player vs AI
@@ -337,13 +338,17 @@ Game::Game(bool isGameNew) {
 
       case 3:
         std::cout << "Work in progress..." << std::endl;
+        canPlay = false;
         break;
     }
 
-    std::cout << "Insert the number of rounds that will be played: ";
-    std::cin >> maxRounds;
+    // Just to prevent further input if multi has been selected
+    if (canPlay) {
+      std::cout << "Insert the number of rounds that will be played: ";
+      std::cin >> maxRounds;
 
-    map = std::unique_ptr<getData>(new getData());
+      map = std::unique_ptr<getData>(new getData());
+    }
 
   } else { //If user selected load game
     std::shared_ptr<Player> plN(new NPC());
@@ -476,7 +481,10 @@ bool Game::play() {
   int turn;
   int opt;
 
-  std::cout << "\033[1;31mRound:\033[0m " << currentRound << std::endl;
+  if (!canPlay)
+    return false;
+
+  std::cout << "\033[1;32mRound:\033[0m " << currentRound << std::endl;
 
   switch(choice) {
     //Two (physical) players
