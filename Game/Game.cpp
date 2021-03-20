@@ -2,6 +2,7 @@
 #include "../Player/Player.hh"
 #include "../Data/getData.hh"
 #include "../NPC/NPC.hh"
+#include "../Multiplayer/server.hh"
 
 #include <iostream>
 #include <map>
@@ -13,6 +14,8 @@
 #include <fstream>
 #include <filesystem>
 #include <sstream>
+
+server *server::instance = 0;
 
 void Game::remindPlayer() {
   std::cout << "Welcome back! Let's be reminded of some things before the game..." << std::endl;
@@ -289,13 +292,13 @@ Game::Game(bool isGameNew) {
       case 1: {
         char ch;
 
-        std::shared_ptr<Player> plN(new NPC());
+        std::unique_ptr<Player> plN(new NPC());
         plN->setInfo();
         ch = plN->getColour();
-        pls.emplace_back(plN);
+        pls.emplace_back(std::move(plN));
 
         char c;
-        std::shared_ptr<Player> pl(new Player());
+        std::unique_ptr<Player> pl(new Player());
         pl->setInfo();
         c = pl->getColour();
         if (c == ch) {
@@ -308,7 +311,7 @@ Game::Game(bool isGameNew) {
             pl->changeColour(std::toupper(newColour[0]));
           } while(pl->getColour() == c);
         }
-        pls.emplace_back(pl);
+        pls.emplace_back(std::move(pl));
 
         break;
       }
@@ -317,7 +320,7 @@ Game::Game(bool isGameNew) {
       case 2:
         for (int i = 0; i < choice; ++i) {
           char c;
-          std::shared_ptr<Player> pl(new Player());
+          std::unique_ptr<Player> pl(new Player());
           pl->setInfo();
           if (i == 0)
             c = pl->getColour();
@@ -331,13 +334,44 @@ Game::Game(bool isGameNew) {
               pl->changeColour(std::toupper(newColour[0]));
             } while(pl->getColour() == c);
           }
-          pls.emplace_back(pl);
+          pls.emplace_back(std::move(pl));
         }
 
         break;
 
+      // Multiplayer
       case 3:
-        std::cout << "Work in progress..." << std::endl;
+        std::cout << "\nSelect:" << std::endl;
+        std::cout << "1. Host" << std::endl;
+        std::cout << "2. Join" << std::endl;
+        std::cout << "\nChoice: ";
+
+        unsigned short int c;
+        std::string tmp_port;
+        std::cin >> c;
+        std::cout << c << std::endl;
+        std::cin.ignore();
+
+        if (c == '1') {
+          std::cout << "Creating server..." << std::endl;
+          std::cout << "Please enter the port: ";
+          std::getline(std::cin, tmp_port);
+        } else {
+          std::cout << "Please enter the port: ";
+          //std::string tmp_port;
+          std::getline(std::cin, tmp_port);
+          //multi = std::unique_ptr<multiPlayer>(new multiPlayer((unsigned short)std::stoi(tmp_port), false));
+        }
+
+        server *multi = multi->getInstance();
+        multi->init((unsigned short)std::stoi(tmp_port));
+        std::cout << "Init finished" << std::endl;
+        getchar();
+        std::thread wConn(&server::waitConn, multi);
+        wConn.detach();
+        getchar();
+        //multi->sendMsg();
+        //multi->recvMsg();
         canPlay = false;
         break;
     }
@@ -351,10 +385,10 @@ Game::Game(bool isGameNew) {
     }
 
   } else { //If user selected load game
-    std::shared_ptr<Player> plN(new NPC());
-    pls.emplace_back(plN);
-    std::shared_ptr<Player> pl(new Player());
-    pls.emplace_back(pl);
+    std::unique_ptr<Player> plN(new NPC());
+    pls.emplace_back(std::move(plN));
+    std::unique_ptr<Player> pl(new Player());
+    pls.emplace_back(std::move(pl));
     map = std::unique_ptr<getData>(new getData());
 
     if (load()) {

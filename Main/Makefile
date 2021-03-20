@@ -1,5 +1,5 @@
 all:
-	#The -lstdc++fs option is only for those with the g++ 8.3.0 or earlier version and prevents a runtime bug from occuring. 
-	g++ -std=c++17 main.cpp ../Data/getData.cpp ../Game/Game.cpp ../Player/Player.cpp ../NPC/NPC.cpp -lstdc++fs -o 4InARow
+	#The -lstdc++fs option is only for those with the g++ 8.3.0 or earlier version and prevents a runtime bug from occuring.
+	g++ -std=c++17 -lstdc++fs -pthread main.cpp ../Data/getData.cpp ../Game/Game.cpp ../Player/Player.cpp ../NPC/NPC.cpp ../Multiplayer/server.cpp -o 4InARow
 clean:
 	rm Play

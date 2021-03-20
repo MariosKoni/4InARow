@@ -31,7 +31,7 @@ public:
   void setScore(int);
 
   virtual void setInfo();
-  virtual std::pair<int, int> generateCoordinates(std::shared_ptr<getData>, char, int);
-  virtual bool needToDefend(std::shared_ptr<getData>, char);
+  virtual std::pair<int, int> generateCoordinates(std::unique_ptr<getData>&, char, int);
+  virtual bool needToDefend(std::unique_ptr<getData>&, char);
   virtual void insertCoords(int, int);
 };

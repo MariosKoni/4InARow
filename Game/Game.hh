@@ -3,6 +3,7 @@
 #include "../Player/Player.hh"
 #include "../Data/getData.hh"
 #include "../NPC/NPC.hh"
+#include "../Multiplayer/server.hh"
 
 #include <string>
 #include <list>
@@ -21,8 +22,8 @@ private:
   int i;
   bool canPlay = true;
 
-  std::vector<std::shared_ptr<Player>> pls;
-  std::shared_ptr<getData> map;
+  std::vector<std::unique_ptr<Player>> pls;
+  std::unique_ptr<getData> map;
 
   std::vector<std::pair<int, int>> spaces;
 
