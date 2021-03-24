@@ -16,8 +16,11 @@ protected:
 
   int score;
 
+  bool isFirst = false;
+
 public:
   Player();
+  Player(std::string&, std::pair<std::string, char>); // For multi
 
   std::string getName();
   char getColour();
@@ -29,6 +32,7 @@ public:
   void setColour1(std::string&);
   void setColour2(char);
   void setScore(int);
+  void setStatus(bool);
 
   virtual void setInfo();
   virtual std::pair<int, int> generateCoordinates(std::unique_ptr<getData>&, char, int);

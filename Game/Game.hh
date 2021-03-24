@@ -11,6 +11,7 @@
 #include <vector>
 #include <memory>
 #include <filesystem>
+#include <thread>
 
 class Game {
 private:
@@ -21,6 +22,12 @@ private:
   int choice;
   int i;
   bool canPlay = true;
+
+  int sock;
+  unsigned short int port;
+  struct sockaddr_in server_addr;
+  struct hostent *serv;
+  std::thread wConn;
 
   std::vector<std::unique_ptr<Player>> pls;
   std::unique_ptr<getData> map;
@@ -41,4 +48,9 @@ public:
   bool getCanPlay(); //Returns the value of the attribute
   void remindPlayer(); //Reminds player/players of the info they gave to the system
   int getChoice(); //Returns the value of the choice
+
+  void clientInit(unsigned short int, std::string&); // Initialize client
+  void sendClientToServer(std::unique_ptr<Player>&); // Send client to server
+  //void recvMsg(int);
+  std::thread& getwConnThread();
 };

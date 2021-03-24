@@ -13,6 +13,12 @@ Player::Player() {
   score = 0;
 }
 
+Player::Player(std::string& n, std::pair<std::string, char> c) {
+  score = 0;
+  name = n;
+  col = c;
+}
+
 void Player::setInfo() {
   std::cout << "Hello player what's your name ?" << std::endl;
   std::cout << "Name: ";
@@ -71,6 +77,10 @@ void Player::setColour2(char c2) {
 
 void Player::setScore(int s) {
   score = s;
+}
+
+void Player::setStatus(bool s) {
+  isFirst = s;
 }
 
 //Dummies

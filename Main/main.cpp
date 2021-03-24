@@ -25,6 +25,8 @@ int main() {
 
         while(g1.play()){}
 
+        g1.getwConnThread().join();
+
         break;
       }
       case 2: {

@@ -15,6 +15,10 @@
 #include <filesystem>
 #include <sstream>
 
+#include <netdb.h>
+#include <strings.h>
+#include <unistd.h>
+
 server *server::instance = 0;
 
 void Game::remindPlayer() {
@@ -341,6 +345,10 @@ Game::Game(bool isGameNew) {
 
       // Multiplayer
       case 3:
+        std::unique_ptr<Player> pl(new Player());
+        pl->setInfo();
+        char color = pl->getColour();
+
         std::cout << "\nSelect:" << std::endl;
         std::cout << "1. Host" << std::endl;
         std::cout << "2. Join" << std::endl;
@@ -349,39 +357,61 @@ Game::Game(bool isGameNew) {
         unsigned short int c;
         std::string tmp_port;
         std::cin >> c;
-        std::cout << c << std::endl;
         std::cin.ignore();
 
-        if (c == '1') {
+        if (c == 1) {
+          pl->setStatus(true);
           std::cout << "Creating server..." << std::endl;
           std::cout << "Please enter the port: ";
           std::getline(std::cin, tmp_port);
+          server *multi = multi->getInstance();
+          multi->init((unsigned short)std::stoi(tmp_port));
+          wConn = std::thread(&server::waitConn, multi);
+          wConn.detach();
+
+          std::string a = "127.0.0.1";
+          clientInit((unsigned short)std::stoi(tmp_port), a);
+          sendClientToServer(pl);
         } else {
+          std::cout << "Please enter the IP address of the server: ";
+          std::string ip;
+          std::getline(std::cin, ip);
           std::cout << "Please enter the port: ";
-          //std::string tmp_port;
           std::getline(std::cin, tmp_port);
-          //multi = std::unique_ptr<multiPlayer>(new multiPlayer((unsigned short)std::stoi(tmp_port), false));
+
+          clientInit((unsigned short)std::stoi(tmp_port), ip);
+          sendClientToServer(pl);
         }
 
-        server *multi = multi->getInstance();
-        multi->init((unsigned short)std::stoi(tmp_port));
-        std::cout << "Init finished" << std::endl;
-        getchar();
-        std::thread wConn(&server::waitConn, multi);
-        wConn.detach();
-        getchar();
-        //multi->sendMsg();
-        //multi->recvMsg();
-        canPlay = false;
+        char tmp[256];
+        read(sock, tmp, 256);
+        std::string re(tmp);
+        std::cout << re << std::endl;
+
         break;
     }
 
-    // Just to prevent further input if multi has been selected
-    if (canPlay) {
+    if (choice != 3) {
       std::cout << "Insert the number of rounds that will be played: ";
       std::cin >> maxRounds;
 
       map = std::unique_ptr<getData>(new getData());
+    } else {
+      char isfirst[1];
+      ssize_t re = read(sock, isfirst, 1);
+      if (re == -1) {
+        std::cout << "Cannot read from server" << std::endl;
+        exit(1);
+      }
+
+      if (isfirst[0] == '1') {
+        std::cout << "Insert the number of rounds that will be played: ";
+        std::cin >> maxRounds;
+
+        map = std::unique_ptr<getData>(new getData());
+        server *multi = multi->getInstance();
+        multi->setBoard(std::move(map));
+      }
     }
 
   } else { //If user selected load game
@@ -521,6 +551,10 @@ bool Game::play() {
   std::cout << "\033[1;32mRound:\033[0m " << currentRound << std::endl;
 
   switch(choice) {
+    // Multiplayer
+    case 3:
+      
+      break;
     //Two (physical) players
     case 2:
       if (i % 2 == 0) {
@@ -697,4 +731,38 @@ bool Game::play() {
 
 bool Game::getCanPlay() {
   return canPlay;
+}
+
+void Game::clientInit(unsigned short int p, std::string &address) {
+  port = p;
+  serv = gethostbyname(address.c_str());
+  if (serv == NULL) {
+    std::cout << "Could not find server" << std::endl;
+    exit(1);
+  }
+
+  bzero((char *) &server_addr, sizeof(server_addr));
+  server_addr.sin_family = AF_INET;
+  bcopy(serv->h_addr, (char *)&server_addr.sin_addr.s_addr, serv->h_length);
+  server_addr.sin_port = htons(port);
+
+  sock = socket(AF_INET, SOCK_STREAM, 0);
+  if (!sock) {
+    std::cout << "Could not create socket" << std::endl;
+    exit(1);
+  }
+
+  if (connect(sock ,(struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+    std::cout << "Could not connect to server" << std::endl;
+    exit(1);
+  }
+}
+
+void Game::sendClientToServer(std::unique_ptr<Player> &pl) {
+  write(sock, pl->getName().c_str(), 256); // Send name
+  write(sock, pl->getColF().c_str(), 5); // Send favourite color
+}
+
+std::thread& Game::getwConnThread() {
+  return wConn;
 }
