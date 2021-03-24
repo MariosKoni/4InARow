@@ -369,7 +369,7 @@ Game::Game(bool isGameNew) {
           wConn = std::thread(&server::waitConn, multi);
           wConn.detach();
 
-          std::string a = "127.0.0.1";
+          std::string a = multi->getServerIP();
           clientInit((unsigned short)std::stoi(tmp_port), a);
           sendClientToServer(pl);
         } else {
@@ -553,7 +553,12 @@ bool Game::play() {
   switch(choice) {
     // Multiplayer
     case 3:
-      
+      char isfirst[1];
+      ssize_t re = read(sock, isfirst, 1);
+      if (re == -1) {
+        std::cout << "Cannot read from server" << std::endl;
+        exit(1);
+      }
       break;
     //Two (physical) players
     case 2:

@@ -28,6 +28,7 @@ private:
 public:
   static server* getInstance();
   void init(unsigned short int);
+  std::string getServerIP();
   void waitConn();
   void retrieveClient(int);
   void serve();
