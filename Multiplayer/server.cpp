@@ -88,7 +88,7 @@ void server::retrieveClient(int connfd) {
   std::string fC(favColor);
   char fC1 = fC.at(0);
   if (clients.size()) {
-    if (!fC.compare(clients.at(0).getColF())) {
+    if (!fC.compare(clients.at(0)->getColF())) {
       fC = "Red";
       fC1 = 'R';
     }
