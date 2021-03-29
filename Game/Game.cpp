@@ -283,7 +283,7 @@ Game::Game(bool isGameNew) {
     system("cls");
     #endif
 
-    std::cout << "Select the mode\n1. One vs AI\n2. Two\n3. Multiplayer(W.I.P)\nChoice: ";
+    std::cout << "Select the mode\n1. One vs AI\n2. Two\n3. Multiplayer(W.I.P)\n\nChoice: ";
     do {
       std::cin >> choice;
       if (choice < 1 || choice > 3)
@@ -372,6 +372,7 @@ Game::Game(bool isGameNew) {
           std::string a = multi->getServerIP();
           clientInit((unsigned short)std::stoi(tmp_port), a);
           sendClientToServer(pl);
+          multi->setGame(this);
         } else {
           std::cout << "Please enter the IP address of the server: ";
           std::string ip;
@@ -552,14 +553,19 @@ bool Game::play() {
 
   switch(choice) {
     // Multiplayer
-    case 3:
+    case 3: {
       char isfirst[1];
       ssize_t re = read(sock, isfirst, 1);
       if (re == -1) {
         std::cout << "Cannot read from server" << std::endl;
         exit(1);
       }
+
+      if (isfirst[0] == '1') {
+
+      }
       break;
+    }
     //Two (physical) players
     case 2:
       if (i % 2 == 0) {
@@ -770,4 +776,8 @@ void Game::sendClientToServer(std::unique_ptr<Player> &pl) {
 
 std::thread& Game::getwConnThread() {
   return wConn;
+}
+
+int Game::getI() {
+  return i;
 }

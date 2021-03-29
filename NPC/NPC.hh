@@ -19,7 +19,7 @@ private:
 
 public:
   void setInfo();
-  std::pair<int, int> generateCoordinates(std::shared_ptr<getData>, char, int);
-  bool needToDefend(std::shared_ptr<getData>, char);
+  std::pair<int, int> generateCoordinates(std::unique_ptr<getData>&, char, int);
+  bool needToDefend(std::unique_ptr<getData>&, char);
   void insertCoords(int, int);
 };

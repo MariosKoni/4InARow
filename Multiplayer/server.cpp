@@ -124,8 +124,13 @@ void server::retrieveClient(int connfd) {
   char fC1 = fC.at(0);
   if (clients.size()) {
     if (!fC.compare(clients.at(0)->getColF())) {
-      fC = "Red";
-      fC1 = 'R';
+      if (!clients.at(0)->getColF().compare("Blue")) {
+        fC = "Red";
+        fC1 = 'R';
+      } else {
+        fC = "Blue";
+        fC1 = 'B';
+      }
     }
   }
   std::pair<std::string, char> c(fC, fC1);
@@ -154,7 +159,12 @@ void server::serve() {
     }
   }
 
-  
+  while (game->getCanPlay() == true) {
+    if (!game->getI() % 2) {
+      std::string turn("It's " + clients.at(0)->getName() + " turn to play");
+
+    }
+  }
 }
 
 void server::closeServer() {
@@ -163,4 +173,8 @@ void server::closeServer() {
 
 void server::setBoard(std::unique_ptr<getData> b) {
   board = std::move(b);
+}
+
+void server::setGame(Game g) {
+  game = &g;
 }

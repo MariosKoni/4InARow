@@ -3,7 +3,10 @@
 #include "../Player/Player.hh"
 #include "../Data/getData.hh"
 #include "../NPC/NPC.hh"
-#include "../Multiplayer/server.hh"
+
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
 
 #include <string>
 #include <list>
@@ -48,6 +51,7 @@ public:
   bool getCanPlay(); //Returns the value of the attribute
   void remindPlayer(); //Reminds player/players of the info they gave to the system
   int getChoice(); //Returns the value of the choice
+  int getI(); //Returns i
 
   void clientInit(unsigned short int, std::string&); // Initialize client
   void sendClientToServer(std::unique_ptr<Player>&); // Send client to server

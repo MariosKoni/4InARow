@@ -2,6 +2,7 @@
 
 #include "../Data/getData.hh"
 #include "../Player/Player.hh"
+#include "../Game/Game.hh"
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -24,6 +25,7 @@ private:
   std::vector<std::unique_ptr<Player>> clients;
   std::vector<int> clients_id;
   std::unique_ptr<getData> board;
+  Game *game;
 
 public:
   static server* getInstance();
@@ -36,4 +38,5 @@ public:
   void recvMsg();
   void closeServer();
   void setBoard(std::unique_ptr<getData>);
+  void setGame(Game);
 };
